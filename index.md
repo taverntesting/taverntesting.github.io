@@ -1,37 +1,26 @@
-## Welcome to GitHub Pages
+# Tavern
+## Restful API testing
 
-You can use the [editor on GitHub](https://github.com/taverntesting/taverntesting/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+Tavern is a free and open source command-line tool and Python library for automated testing of RESTful APIs.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Write tests in a simple, concise and flexible YAML-based format and run them from your own code, from Pytest or from the command line.
 
-### Markdown
+### Pytest integration
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Tavern integrates with Pytest. This means you get access to all of the Pytest ecosystem. This means you can do all sorts of things like:
+- Regularly run your tests against a test server and report failures
+- Generate reports  
 
-```markdown
-Syntax highlighted code block
+### Why not Postman or Insomnia?
 
-# Header 1
-## Header 2
-### Header 3
+Tavern is a focused tool for developers which does one thing well: automated testing of RESTful APIS.
 
-- Bulleted
-- List
+Postman and Insomnia are excellent tools which cover a wide range of use-cases, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, we found Postman to have several limitations:
+- Limited library support, even for simple tasks like decoding a JWT
+- Lots of repeated code for custom functions
+- Challenging to integrate with GitLab and other continuous integration tools
+- Verbose testing language and export
 
-1. Numbered
-2. List
+Tavern does not do many of the things Postman and Insomnia do. For example, Tavern does not have a GUI nor does it do API monitoring or mock servers.
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/taverntesting/taverntesting/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+On the other hand, Tavern is free and open-source and is a more powerful tool for developers to automate tests.
