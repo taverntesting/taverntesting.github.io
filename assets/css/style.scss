@@ -1,0 +1,33 @@
+---
+---
+
+$overlock-green: #00B898;
+$overlock-green--dark: darken($overlock-green, 20%);
+$overlock-green--darker: darken($overlock-green, 25%);
+
+$overlock-black: #2C313B;
+
+$header-bg-color: $overlock-green--dark;
+$header-bg-color-secondary: $overlock-green;
+$section-headings-color: $overlock-green--darker;
+
+@import "{{ site.theme }}";
+
+.beer-icon {
+	vertical-align: middle;
+	position: relative;
+	top: -5px;
+	height: 52px;
+}
+
+.project-tagline {
+	opacity: 0.9;
+}
+
+.btn {
+	color: rgba(255, 255, 255, 0.9);
+
+	&:hover {
+		color: rgba(255, 255, 255, 1);
+	}
+}
