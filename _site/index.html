@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.3.0 -->
+<title>Restful API testing | Tavern</title>
+<meta property="og:title" content="Restful API testing" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Automated RESTful API testing" />
+<meta property="og:description" content="Automated RESTful API testing" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="Tavern" />
+<script type="application/ld+json">
+{"name":"Tavern","description":"Automated RESTful API testing","author":null,"@type":"WebSite","url":"http://localhost:4000/","publisher":null,"image":null,"headline":"Restful API testing","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="description" content="Automated RESTful API testing"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/css/style.css?v=b7884a0b8d97f69a0e47d25da35948a3aaaf3b88">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Tavern</h1>
+      <h2 class="project-tagline">Automated RESTful API testing</h2>
+        <a href="https://github.com/taverntesting/tavern" class="btn">View on GitHub</a>
+      
+    </section>
+
+    <section class="main-content">
+      <h1 id="restful-api-testing">Restful API testing</h1>
+
+<p>Tavern is command-line tool and Python library and Pytest plugin for automated testing of RESTful APIs, with a simple, concise and flexible YAML-based syntax. It’s very simple to get started, and highly customisable for complex tests.</p>
+
+<p>For example, here’s a simple test for an endpoint which doubles any number you pass it:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">block_name</span><span class="pi">:</span> <span class="s">Make sure server doubles number properly</span>
+
+<span class="na">tests</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure number is returned correctly</span>
+    <span class="na">request</span><span class="pi">:</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/double</span>
+      <span class="na">json</span><span class="pi">:</span>
+        <span class="na">number</span><span class="pi">:</span> <span class="s">5</span>
+      <span class="na">method</span><span class="pi">:</span> <span class="s">POST</span>
+      <span class="na">headers</span><span class="pi">:</span>
+        <span class="na">content-type</span><span class="pi">:</span> <span class="s">application/json</span>
+    <span class="na">response</span><span class="pi">:</span>
+      <span class="na">status_code</span><span class="pi">:</span> <span class="s">200</span>
+      <span class="na">body</span><span class="pi">:</span>
+        <span class="na">double</span><span class="pi">:</span> <span class="s">10</span>
+</code></pre></div></div>
+
+<p>See the examples page for more.</p>
+
+<h2 id="pytest-integration">Pytest integration</h2>
+
+<p>Tavern integrates with Pytest. This means you get access to all of the Pytest ecosystem. This means you can do all sorts of things like:</p>
+<ul>
+  <li>Regularly run your tests against a test server and report failures</li>
+  <li>Generate reports</li>
+</ul>
+
+<h2 id="why-not-postman-or-insomnia">Why not Postman or Insomnia?</h2>
+
+<p>Tavern is a focused tool for developers which does one thing well: automated testing of RESTful APIS.</p>
+
+<p>Postman and Insomnia are excellent tools which cover a wide range of use-cases, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, we found Postman to have several limitations:</p>
+<ul>
+  <li>Limited library support, even for simple tasks like decoding a JWT</li>
+  <li>Lots of repeated code for custom functions</li>
+  <li>Challenging to integrate with GitLab and other continuous integration tools</li>
+  <li>Verbose testing language and export</li>
+</ul>
+
+<p>Tavern does not do many of the things Postman and Insomnia do. For example, Tavern does not have a GUI nor does it do API monitoring or mock servers.</p>
+
+<p>On the other hand, Tavern is free and open-source and is a more powerful tool for developers to automate tests.</p>
+
+
+      <footer class="site-footer">
+        
+          <span class="site-footer-owner"><a href="http://github.com/taverntesting/taverntesting.github.io">taverntesting.github.io</a> is maintained by <a href="http://github.com/taverntesting">taverntesting</a>.</span>
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+    
+  </body>
+</html>

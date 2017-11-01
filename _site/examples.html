@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.3.0 -->
+<title>A simple example test | Tavern</title>
+<meta property="og:title" content="A simple example test" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Automated RESTful API testing" />
+<meta property="og:description" content="Automated RESTful API testing" />
+<link rel="canonical" href="http://localhost:4000/examples.html" />
+<meta property="og:url" content="http://localhost:4000/examples.html" />
+<meta property="og:site_name" content="Tavern" />
+<script type="application/ld+json">
+{"name":null,"description":"Automated RESTful API testing","author":null,"@type":"WebPage","url":"http://localhost:4000/examples.html","publisher":null,"image":null,"headline":"A simple example test","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="description" content="Automated RESTful API testing"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/css/style.css?v=b7884a0b8d97f69a0e47d25da35948a3aaaf3b88">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Tavern</h1>
+      <h2 class="project-tagline">Automated RESTful API testing</h2>
+        <a href="https://github.com/taverntesting/tavern" class="btn">View on GitHub</a>
+      
+    </section>
+
+    <section class="main-content">
+      <h1 id="a-simple-example-test">A simple example test</h1>
+
+<p>In this example we will create a server which doubles any number you pass it, and write some simple tests for it. You’ll see how simple the YAML-based sysntax can be, and the three different ways you can run Tavern tests.</p>
+
+<p>Here’s what such a server might look like:</p>
+
+<h4 id="serverpy">server.py</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">"/double"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">"POST"</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">double_number</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s">"number"</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="nb">KeyError</span><span class="p">,</span> <span class="nb">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"no number passed"</span><span class="p">}),</span> <span class="mi">400</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">double</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>
+    <span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"a number was not passed"</span><span class="p">}),</span> <span class="mi">400</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"double"</span><span class="p">:</span> <span class="n">double</span><span class="p">}),</span> <span class="mi">200</span>
+</code></pre></div></div>
+
+<p>There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the corret error codes and messages.</p>
+
+<p>To do this we will write two ‘blocks’, one for the success case and one for the error case. Each bloack can contain one or more tests, and each test has a name, a request and an expecyted response.</p>
+
+<h4 id="test_servertavernyaml">test_server.tavern.yaml</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+
+block_name: Make sure server doubles number properly
+
+tests:
+  - name: Make sure number is returned correctly
+    request:
+      url: http://localhost:5000/double
+      json:
+        number: 5
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      body:
+        double: 10
+
+---
+
+block_name: Check invalid inputs are handled
+
+tests:
+  - name: Make sure invalid numbers don't cause an error
+    request:
+      url: http://localhost:5000/double
+      json:
+        number: dkfsd
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 400
+      body:
+        error: a number was not passed
+
+  - name: Make sure it raises an error if a number isn't passed
+    request:
+      url: http://localhost:5000/double
+      json:
+        wrong_key: 5
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 400
+      body:
+        error: no number passed
+
+</code></pre></div></div>
+
+<h2 id="running-the-tests">Running the tests</h2>
+
+<p>Tests can be run in three different ways: from Python code, from the command line, or with Pytest. All three require Tavern to be installed.</p>
+
+<h3 id="using-python">Using Python</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from tavern.core import run
+
+success = run("test_server.tavern.yaml", {})
+
+if not success:
+    print("Error running tests")
+
+</code></pre></div></div>
+
+<h3 id="using-the-command-line-tavern-ci">Using the command line (<code class="highlighter-rouge">tavern-ci</code>)</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tavern-ci --in-file test_server.tavern.yaml
+$ echo $?
+0
+</code></pre></div></div>
+
+<h3 id="using-pytest">Using Pytest</h3>
+
+<p>Just run pytest and point it to the folder containing the integration tests (or add it to <code class="highlighter-rouge">setup.cfg/tox.ini/etc</code>). It will automatically find the tests using Pytest’s collection mechanism.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ py.test
+============================= test session starts ==============================
+platform linux -- Python 3.5.2, pytest-3.2.0, py-1.4.34, pluggy-0.4.0
+rootdir: /home/developer/project/tests, inifile: setup.cfg
+plugins: tavern-0.0.1
+collected 4 items 
+
+test_server.tavern.yaml ..
+
+===================== 2 passed, 2 skipped in 0.07 seconds ======================
+</code></pre></div></div>
+
+
+      <footer class="site-footer">
+        
+          <span class="site-footer-owner"><a href="http://github.com/taverntesting/taverntesting.github.io">taverntesting.github.io</a> is maintained by <a href="http://github.com/taverntesting">taverntesting</a>.</span>
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+    
+  </body>
+</html>
