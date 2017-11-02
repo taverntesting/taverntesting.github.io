@@ -1,45 +1,61 @@
 # Restful API testing
 
-Tavern is command-line tool and Python library and Pytest plugin for automated testing of RESTful APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests.
+Tavern is a pytest plugin, command-line tool and Python library for automated testing of RESTful APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests.
 
-For example, here's a simple test for an endpoint which doubles any number you pass it:
+The best way to use Tavern is with [pytest](https://docs.pytest.org/en/latest/). Tavern comes with a pytest plugin so that literally all you have to do is install pytest and Tavern, write your tests in `.tavern.yaml` files and run pytest. This means you get access to all of the Pytest ecosystem and lets do all sorts of things like regularly run your tests against a test server and report failures or generate HTML reports.
+
+You can also integrate Tavern into your own test framework or continuous integration setup using the Python library, or use the command line tool, `tavern-ci` with bash scripts and cron jobs.
+
+To learn more, check out the [examples](/examples) or the complete [documentation](/documentation). If you're interested in contributing to the project take a look at the [GitHub repo](https://github.com/taverntesting/tavern).
+
+## Quickstart
+
+```
+$ pip install tavern
+```
 
 ```yaml
-block_name: Make sure server doubles number properly
+# minimal_test.tavern.yaml
+block_name: Get some fake data from the JSON placeholder API
 
 tests:
-  - name: Make sure number is returned correctly
+  - name: Make sure we have the right ID
     request:
-      url: http://localhost:5000/double
-      json:
-        number: 5
-      method: POST
-      headers:
-        content-type: application/json
+      url: https://jsonplaceholder.typicode.com/posts/1
+      method: GET
     response:
       status_code: 200
       body:
-        double: 10
+        id: 1
 ```
 
-See the examples page for more.
+```bash
+$ tavern-ci --in-file minimal_test.tavern.yaml
+```
 
-## Pytest integration
+...and you're off! To see how it works in more detail take a look at the [examples page](/examples) or check out the [full documentation](/documentation).
 
-Tavern integrates with Pytest. This means you get access to all of the Pytest ecosystem. This means you can do all sorts of things like:
-- Regularly run your tests against a test server and report failures
-- Generate reports  
+## Why not Postman, Insomnia or pyresttest?
 
-## Why not Postman or Insomnia?
+Tavern is a focused tool which does one thing well: automated testing of RESTful APIs.
 
-Tavern is a focused tool for developers which does one thing well: automated testing of RESTful APIS.
+**Postman** and **Insomnia** are excellent tools which cover a wide range of use-cases, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, Tavern has several advantages over Postman:
+- A full-featured Python environment for writing custom validation functions
+- Seamless integration with Pytest to keep all your tests in one place
+- A simpler, less verbose and clearer testing language
 
-Postman and Insomnia are excellent tools which cover a wide range of use-cases, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, we found Postman to have several limitations:
-- Limited library support, even for simple tasks like decoding a JWT
-- Lots of repeated code for custom functions
-- Challenging to integrate with GitLab and other continuous integration tools
-- Verbose testing language and export
+Tavern does not do many of the things Postman and Insomnia do. For example, Tavern does not have a GUI nor does it do API monitoring or mock servers. On the other hand, Tavern is free and open-source and is a more powerful tool for developers to automate tests.
 
-Tavern does not do many of the things Postman and Insomnia do. For example, Tavern does not have a GUI nor does it do API monitoring or mock servers.
+**pyresttest** is similar to Tavern but is no longer actively developed. Tavern also has several advantages over PyRestTest which overall add up to a better developer experience:
 
-On the other hand, Tavern is free and open-source and is a more powerful tool for developers to automate tests.
+- Cleaner test syntax which is more intuitive, especially for non-developers
+- Validation function are more flexible and easier to use
+- Better explanations of why a test failed
+
+## Developed and maintained by [Overlock](https://overlock.io)
+
+Overlock helps developers quickly find and fix bugs in distributed systems such as IoT deployments.
+
+It allows you to discover exceptions and faults in your IoT (Internet of Things) system by gathering together exception information from all areas of your deployment, whether it’s on end devices, gateways or servers. Simply add our daemon and start capturing everything you need to understand issues in development or production.
+
+Learn more and get access to the beta at [overlock.io](https://overlock.io)

@@ -1,10 +1,36 @@
-# A simple example test
+# Example Tests
+
+## The simplest possible test
+
+To show you just how simple a Tavern test can be, here's one which uses the JSON Placeholder API at [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com/). To try it, create a new file called `minimal_test.tavern.yaml` with the following:
+
+```yaml
+block_name: Get some fake data from the JSON placeholder API
+
+tests:
+  - name: Make sure we have the right ID
+    request:
+      url: https://jsonplaceholder.typicode.com/posts/1
+      method: GET
+    response:
+      status_code: 200
+      body:
+        id: 1
+```
+
+Run it using the Tavern command-line interface, `tavern-ci`:
+
+```
+tavern-ci --in-file minimal.tavern.yaml
+```
+
+## A simple test
 
 In this example we will create a server which doubles any number you pass it, and write some simple tests for it. You'll see how simple the YAML-based sysntax can be, and the three different ways you can run Tavern tests.
 
 Here's what such a server might look like:
 
-#### server.py
+### server.py
 
 ```python
 from flask import Flask, jsonify, request
@@ -31,7 +57,7 @@ There are two key things to test here: first, that it successfully doubles numbe
 
 To do this we will write two 'blocks', one for the success case and one for the error case. Each bloack can contain one or more tests, and each test has a name, a request and an expecyted response.
 
-#### test_server.tavern.yaml
+### test_server.tavern.yaml
 
 ```
 ---
@@ -98,7 +124,6 @@ success = run("test_server.tavern.yaml", {})
 
 if not success:
     print("Error running tests")
-
 ```
 
 ### Using the command line (`tavern-ci`)

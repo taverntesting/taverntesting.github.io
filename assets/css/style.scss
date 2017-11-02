@@ -31,3 +31,20 @@ $section-headings-color: $overlock-green--darker;
 		color: rgba(255, 255, 255, 1);
 	}
 }
+
+.project-name {
+	opacity: 0.9;
+
+	a {
+		color: white;
+		text-decoration: none;
+	}
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+body {
+	font-family: 'Palanquin', "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

@@ -323,3 +323,9 @@ a:hover { text-decoration: underline; }
 
 .btn { color: rgba(255, 255, 255, 0.9); }
 .btn:hover { color: white; }
+
+.project-name { opacity: 0.9; }
+.project-name a { color: white; text-decoration: none; }
+.project-name:hover { opacity: 1; }
+
+body { font-family: 'Palanquin', "Helvetica Neue", Helvetica, Arial, sans-serif; }

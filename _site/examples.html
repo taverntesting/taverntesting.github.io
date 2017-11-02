@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.3.0 -->
-<title>A simple example test | Tavern</title>
-<meta property="og:title" content="A simple example test" />
+<title>Example Tests | Tavern</title>
+<meta property="og:title" content="Example Tests" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Automated RESTful API testing" />
 <meta property="og:description" content="Automated RESTful API testing" />
@@ -13,35 +13,62 @@
 <meta property="og:url" content="http://localhost:4000/examples.html" />
 <meta property="og:site_name" content="Tavern" />
 <script type="application/ld+json">
-{"name":null,"description":"Automated RESTful API testing","author":null,"@type":"WebPage","url":"http://localhost:4000/examples.html","publisher":null,"image":null,"headline":"A simple example test","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+{"name":null,"description":"Automated RESTful API testing","author":null,"@type":"WebPage","url":"http://localhost:4000/examples.html","publisher":null,"image":null,"headline":"Example Tests","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="description" content="Automated RESTful API testing"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=b7048d12baf38b51920e53f50b55ee9c353138f9">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Palanquin" rel="stylesheet"> 
+    <link rel="stylesheet" href="/assets/css/style.css?v=91a1e91755c55eb92b7238f3ec537a897a5b108a">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.png">
   </head>
   <body>
     <section class="page-header">
       <h1 class="project-name">
-        <img class="beer-icon" src="/icon.png">
-        Tavern
+        <a href="/">
+          <img class="beer-icon" src="/assets/icon.png">
+          Tavern
+        </a>
       </h1>
       <h2 class="project-tagline">Automated RESTful API testing</h2>
+        <a href="/documentation" class="btn">Documentation</a>
+        <a href="/examples" class="btn">Examples</a>
         <a href="https://github.com/taverntesting/tavern" class="btn">View on GitHub</a>
-      
     </section>
 
     <section class="main-content">
-      <h1 id="a-simple-example-test">A simple example test</h1>
+      <h1 id="example-tests">Example Tests</h1>
+
+<h2 id="the-simplest-possible-test">The simplest possible test</h2>
+
+<p>To show you just how simple a Tavern test can be, here’s one which uses the JSON Placeholder API at <a href="https://jsonplaceholder.typicode.com/">jsonplaceholder.typicode.com</a>. To try it, create a new file called <code class="highlighter-rouge">minimal_test.tavern.yaml</code> with the following:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">block_name</span><span class="pi">:</span> <span class="s">Get some fake data from the JSON placeholder API</span>
+
+<span class="na">tests</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure we have the right ID</span>
+    <span class="na">request</span><span class="pi">:</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s">https://jsonplaceholder.typicode.com/posts/1</span>
+      <span class="na">method</span><span class="pi">:</span> <span class="s">GET</span>
+    <span class="na">response</span><span class="pi">:</span>
+      <span class="na">status_code</span><span class="pi">:</span> <span class="s">200</span>
+      <span class="na">body</span><span class="pi">:</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">1</span>
+</code></pre></div></div>
+
+<p>Run it using the Tavern command-line interface, <code class="highlighter-rouge">tavern-ci</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tavern-ci --in-file minimal.tavern.yaml
+</code></pre></div></div>
+
+<h2 id="a-simple-test">A simple test</h2>
 
 <p>In this example we will create a server which doubles any number you pass it, and write some simple tests for it. You’ll see how simple the YAML-based sysntax can be, and the three different ways you can run Tavern tests.</p>
 
 <p>Here’s what such a server might look like:</p>
 
-<h4 id="serverpy">server.py</h4>
+<h3 id="serverpy">server.py</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -67,7 +94,7 @@
 
 <p>To do this we will write two ‘blocks’, one for the success case and one for the error case. Each bloack can contain one or more tests, and each test has a name, a request and an expecyted response.</p>
 
-<h4 id="test_servertavernyaml">test_server.tavern.yaml</h4>
+<h3 id="test_servertavernyaml">test_server.tavern.yaml</h3>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
 
@@ -132,7 +159,6 @@ success = run("test_server.tavern.yaml", {})
 
 if not success:
     print("Error running tests")
-
 </code></pre></div></div>
 
 <h3 id="using-the-command-line-tavern-ci">Using the command line (<code class="highlighter-rouge">tavern-ci</code>)</h3>
@@ -160,9 +186,9 @@ test_server.tavern.yaml ..
 
 
       <footer class="site-footer">
-        
-          <span class="site-footer-owner"><a href="https://github.com/taverntesting/tavern">Tavern</a> is maintained by <a href="https://github.com/overlockiot">Overlock</a>.</span>
-        
+        <span class="site-footer-owner">
+          <a href="https://github.com/taverntesting/tavern">Tavern</a> is maintained by <a href="https://overlock.io">Overlock</a>.
+        </span>
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
       </footer>
     </section>
