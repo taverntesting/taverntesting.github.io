@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.3.0 -->
+<title>Advanced example server code | Tavern</title>
+<meta property="og:title" content="Advanced example server code" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Automated RESTful API testing" />
+<meta property="og:description" content="Automated RESTful API testing" />
+<link rel="canonical" href="http://localhost:4000/server.html" />
+<meta property="og:url" content="http://localhost:4000/server.html" />
+<meta property="og:site_name" content="Tavern" />
+<script type="application/ld+json">
+{"name":null,"description":"Automated RESTful API testing","author":null,"@type":"WebPage","url":"http://localhost:4000/server.html","publisher":null,"image":null,"headline":"Advanced example server code","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="description" content="Automated RESTful API testing"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link href="https://fonts.googleapis.com/css?family=Palanquin" rel="stylesheet"> 
+    <link rel="stylesheet" href="/assets/css/style.css?v=1997c00e741f3e550ba277b840631a237df58947">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.png">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">
+        <a href="/">
+          <img class="beer-icon" src="/assets/icon.png">
+          Tavern
+        </a>
+      </h1>
+      <h2 class="project-tagline">Automated RESTful API testing</h2>
+        <a href="/documentation" class="btn">Documentation</a>
+        <a href="/examples" class="btn">Examples</a>
+        <a href="https://github.com/taverntesting/tavern" class="btn">View on GitHub</a>
+    </section>
+
+    <section class="main-content">
+      <h1 id="advanced-example-server-code">Advanced example server code</h1>
+
+<p>To run the advanced example yourself you’ll need to run a testing server locally using Flask. Just copy the Python code below into a new file and run the following lines to start the server.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">export </span><span class="nv">FLASK_APP</span><span class="o">=</span>server.py
+<span class="nv">$ </span>flask run
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># server.py</span>
+
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">g</span>
+<span class="kn">import</span> <span class="nn">jwt</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="n">SECRET</span> <span class="o">=</span> <span class="s">"CGQgaG7GYvTcpaQZqosLy4"</span>
+<span class="n">DATABASE</span> <span class="o">=</span> <span class="s">"/tmp/test_db"</span>
+
+
+<span class="k">def</span> <span class="nf">get_db</span><span class="p">():</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s">'_database'</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">_database</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">DATABASE</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">db</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"CREATE TABLE numbers_table (name TEXT NOT NULL, number INTEGER NOT NULL)"</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">db</span>
+
+
+<span class="nd">@app.teardown_appcontext</span>
+<span class="k">def</span> <span class="nf">close_connection</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s">'_database'</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">"/login"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">"POST"</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s">"user"</span><span class="p">]</span> <span class="o">!=</span> <span class="s">"test-user"</span> <span class="ow">or</span> <span class="n">r</span><span class="p">[</span><span class="s">"password"</span><span class="p">]</span> <span class="o">!=</span> <span class="s">"correct-password"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"Incorrect username/password"</span><span class="p">}),</span> <span class="mi">401</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">"sub"</span><span class="p">:</span> <span class="s">"test-user"</span><span class="p">,</span>
+        <span class="s">"exp"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">SECRET</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s">"HS256"</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf8"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"token"</span><span class="p">:</span> <span class="n">token</span><span class="p">})</span>
+
+
+<span class="k">def</span> <span class="nf">requires_jwt</span><span class="p">(</span><span class="n">endpoint</span><span class="p">):</span>
+    <span class="s">""" Makes sure a jwt is in the request before accepting it """</span>
+
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_auth_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"Authorization"</span><span class="p">)</span>
+
+        <span class="c"># check token is present</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"No token"</span><span class="p">}),</span> <span class="mi">401</span>
+
+        <span class="n">token_type</span><span class="p">,</span> <span class="n">token</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">" "</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">token_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s">"bearer"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"Wrong token type"</span><span class="p">}),</span> <span class="mi">401</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">SECRET</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s">"HS256"</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"Invalid token"</span><span class="p">}),</span> <span class="mi">401</span>
+
+        <span class="k">return</span> <span class="n">endpoint</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">check_auth_call</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">"/numbers"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">"POST"</span><span class="p">])</span>
+<span class="nd">@requires_jwt</span>
+<span class="k">def</span> <span class="nf">add_number</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span><span class="p">[</span><span class="s">"number"</span><span class="p">]</span>
+        <span class="n">r</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="nb">KeyError</span><span class="p">,</span> <span class="nb">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"missing key"</span><span class="p">}),</span> <span class="mi">400</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">db</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"INSERT INTO numbers_table VALUES (:name, :number)"</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({}),</span> <span class="mi">201</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">"/numbers"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">"GET"</span><span class="p">])</span>
+<span class="nd">@requires_jwt</span>
+<span class="k">def</span> <span class="nf">get_number</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="nb">KeyError</span><span class="p">,</span> <span class="nb">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"error"</span><span class="p">:</span> <span class="s">"missing key"</span><span class="p">}),</span> <span class="mi">400</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">db</span><span class="p">:</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SELECT number FROM numbers_table WHERE name IS :name"</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+    <span class="n">number</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">row</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">"number"</span><span class="p">:</span> <span class="n">number</span><span class="p">})</span>
+</code></pre></div></div>
+
+
+      <footer class="site-footer">
+        <span class="site-footer-owner">
+          <a href="https://github.com/taverntesting/tavern">Tavern</a> is maintained by <a href="https://overlock.io">Overlock</a>.
+        </span>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+    
+  </body>
+</html>

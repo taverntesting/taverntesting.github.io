@@ -1,3 +1,3 @@
 # Documentation
 
-Here, have some docs.
+Full documentation is coming soon. Watch this space!
