@@ -18,7 +18,13 @@ steps:
         id: 1
 ```
 
-In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, `tavern-ci`:
+Next, install Tavern if you have not already:
+
+```bash
+$ pip install tavern
+```
+
+In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
 
 ```bash
 $ tavern-ci --in-file minimal.tavern.yaml
@@ -60,7 +66,7 @@ $ export FLASK_APP=server.py
 $ flask run
 ```
 
-There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more step, and each step has a name, a request and an expected response.
+There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more steps, and each step has a name, a request and an expected response.
 
 ```yaml
 # test_server.tavern.yaml

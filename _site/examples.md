@@ -5,9 +5,9 @@
 To show you just how simple a Tavern test can be, here's one which uses the JSON Placeholder API at [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com/). To try it, create a new file called `minimal_test.tavern.yaml` with the following:
 
 ```yaml
-block_name: Get some fake data from the JSON placeholder API
+test_name: Get some fake data from the JSON placeholder API
 
-tests:
+steps:
   - name: Make sure we have the right ID
     request:
       url: https://jsonplaceholder.typicode.com/posts/1
@@ -18,7 +18,13 @@ tests:
         id: 1
 ```
 
-In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, `tavern-ci`:
+Next, install Tavern if you have not already:
+
+```bash
+$ pip install tavern
+```
+
+In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
 
 ```bash
 $ tavern-ci --in-file minimal.tavern.yaml
@@ -60,16 +66,16 @@ $ export FLASK_APP=server.py
 $ flask run
 ```
 
-There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two 'blocks', one for the success case and one for the error case. Each block can contain one or more tests, and each test has a name, a request and an expected response.
+There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more steps, and each step has a name, a request and an expected response.
 
 ```yaml
 # test_server.tavern.yaml
 
 ---
 
-block_name: Make sure server doubles number properly
+test_name: Make sure server doubles number properly
 
-tests:
+steps:
   - name: Make sure number is returned correctly
     request:
       url: http://localhost:5000/double
@@ -85,9 +91,9 @@ tests:
 
 ---
 
-block_name: Check invalid inputs are handled
+test_name: Check invalid inputs are handled
 
-tests:
+steps:
   - name: Make sure invalid numbers don't cause an error
     request:
       url: http://localhost:5000/double
@@ -160,9 +166,9 @@ The final example uses a more complex test server which requires the user to log
 To test this behaviour we can use multiple tests in a row, keeping track of variables between them, and ensuring the server state has been updated as expected.
 
 ```yaml
-block_name: Make sure server saves and returns a number correctly
+test_name: Make sure server saves and returns a number correctly
 
-tests:
+steps:
   - name: login
     request:
       url: http://localhost:5000/login

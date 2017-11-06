@@ -17,15 +17,14 @@ $ pip install tavern
 ```yaml
 # minimal_test.tavern.yaml
 
-# Every test file has one or more test blocks, groups of
-# related tests to be run in sequence
-block_name: Get some fake data from the JSON placeholder API
+# Every test file has one or more tests...
+test_name: Get some fake data from the JSON placeholder API
 
-tests:
+# ...and each test has one or more steps (e.g. an HTTP request)
+steps:
   - name: Make sure we have the right ID
 
-    # Define the request to be made
-    request:
+    # Define the request to be made...
       url: https://jsonplaceholder.typicode.com/posts/1
       method: GET
 

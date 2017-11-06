@@ -20,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href="https://fonts.googleapis.com/css?family=Palanquin" rel="stylesheet"> 
-    <link rel="stylesheet" href="/assets/css/style.css?v=1997c00e741f3e550ba277b840631a237df58947">
+    <link rel="stylesheet" href="/assets/css/style.css?v=98b7f0518de06b64f30300623caa6d25f9f68115">
     <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.png">
   </head>
   <body>
@@ -44,9 +44,9 @@
 
 <p>To show you just how simple a Tavern test can be, here’s one which uses the JSON Placeholder API at <a href="https://jsonplaceholder.typicode.com/">jsonplaceholder.typicode.com</a>. To try it, create a new file called <code class="highlighter-rouge">minimal_test.tavern.yaml</code> with the following:</p>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">block_name</span><span class="pi">:</span> <span class="s">Get some fake data from the JSON placeholder API</span>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">test_name</span><span class="pi">:</span> <span class="s">Get some fake data from the JSON placeholder API</span>
 
-<span class="na">tests</span><span class="pi">:</span>
+<span class="na">steps</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure we have the right ID</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">https://jsonplaceholder.typicode.com/posts/1</span>
@@ -57,7 +57,12 @@
         <span class="na">id</span><span class="pi">:</span> <span class="s">1</span>
 </code></pre></div></div>
 
-<p>In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, <code class="highlighter-rouge">tavern-ci</code>:</p>
+<p>Next, install Tavern if you have not already:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip install tavern
+</code></pre></div></div>
+
+<p>In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, <code class="highlighter-rouge">tavern-ci</code>, which is installed along with Tavern:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>tavern-ci <span class="nt">--in-file</span> minimal.tavern.yaml
 </code></pre></div></div>
@@ -96,15 +101,15 @@
 <span class="nv">$ </span>flask run
 </code></pre></div></div>
 
-<p>There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two ‘blocks’, one for the success case and one for the error case. Each block can contain one or more tests, and each test has a name, a request and an expected response.</p>
+<p>There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more steps, and each step has a name, a request and an expected response.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_server.tavern.yaml</span>
 
 <span class="nn">---</span>
 
-<span class="na">block_name</span><span class="pi">:</span> <span class="s">Make sure server doubles number properly</span>
+<span class="na">test_name</span><span class="pi">:</span> <span class="s">Make sure server doubles number properly</span>
 
-<span class="na">tests</span><span class="pi">:</span>
+<span class="na">steps</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure number is returned correctly</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/double</span>
@@ -120,9 +125,9 @@
 
 <span class="nn">---</span>
 
-<span class="na">block_name</span><span class="pi">:</span> <span class="s">Check invalid inputs are handled</span>
+<span class="na">test_name</span><span class="pi">:</span> <span class="s">Check invalid inputs are handled</span>
 
-<span class="na">tests</span><span class="pi">:</span>
+<span class="na">steps</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure invalid numbers don't cause an error</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/double</span>
@@ -191,9 +196,9 @@ test_server.tavern.yaml ..
 
 <p>To test this behaviour we can use multiple tests in a row, keeping track of variables between them, and ensuring the server state has been updated as expected.</p>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">block_name</span><span class="pi">:</span> <span class="s">Make sure server saves and returns a number correctly</span>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">test_name</span><span class="pi">:</span> <span class="s">Make sure server saves and returns a number correctly</span>
 
-<span class="na">tests</span><span class="pi">:</span>
+<span class="na">steps</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">login</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/login</span>
