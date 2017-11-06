@@ -16,13 +16,20 @@ $ pip install tavern
 
 ```yaml
 # minimal_test.tavern.yaml
+
+# Every test file has one or more test blocks, groups of
+# related tests to be run in sequence
 block_name: Get some fake data from the JSON placeholder API
 
 tests:
   - name: Make sure we have the right ID
+
+    # Define the request to be made
     request:
       url: https://jsonplaceholder.typicode.com/posts/1
       method: GET
+
+    # ...and the expected response code and body
     response:
       status_code: 200
       body:
@@ -35,7 +42,7 @@ $ tavern-ci --in-file minimal_test.tavern.yaml
 
 ...and you're off! To see how it works in more detail take a look at the [examples page](/examples) or check out the [full documentation](/documentation).
 
-## Why not Postman, Insomnia or pyresttest?
+## Why not Postman, Insomnia or pyresttest etc?
 
 Tavern is a focused tool which does one thing well: automated testing of RESTful APIs.
 
@@ -52,10 +59,18 @@ Tavern does not do many of the things Postman and Insomnia do. For example, Tave
 - Validation function are more flexible and easier to use
 - Better explanations of why a test failed
 
+## Acknowledgements
+
+Tavern makes use of several excellent open-source projects:
+
+- [pytest](https://docs.pytest.org/en/latest/), the testing framework Tavern intergrates with
+- [requests](http://docs.python-requests.org/en/master/), for HTTP requests
+- [YAML](http://yaml.org/) and [pyyaml](https://github.com/yaml/pyyaml), for the test syntax
+- [pykwalify](https://github.com/Grokzen/pykwalify), for JSON schema validation
+- [pyjwt](https://github.com/jpadilla/pyjwt), for decoding JSON Web Tokens
+- [colorlog](https://github.com/borntyping/python-colorlog), for formatting terminal outputs
+
+
 ## Developed and maintained by [Overlock](https://overlock.io)
 
-Overlock helps developers quickly find and fix bugs in distributed systems such as IoT deployments.
-
-It allows you to discover exceptions and faults in your IoT (Internet of Things) system by gathering together exception information from all areas of your deployment, whether it’s on end devices, gateways or servers. Simply add our daemon and start capturing everything you need to understand issues in development or production.
-
-Learn more and get access to the beta at [overlock.io](https://overlock.io)
+Overlock helps developers quickly find and fix bugs in distributed systems such as IoT deployments by gathering together exception information from end devices, gateways or servers. We're currently in beta - find out more at [overlock.io](https://overlock.io)

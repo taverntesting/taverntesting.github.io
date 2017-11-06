@@ -54,13 +54,20 @@
 </code></pre></div></div>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># minimal_test.tavern.yaml</span>
+
+<span class="c1"># Every test file has one or more test blocks, groups of</span>
+<span class="c1"># related tests to be run in sequence</span>
 <span class="na">block_name</span><span class="pi">:</span> <span class="s">Get some fake data from the JSON placeholder API</span>
 
 <span class="na">tests</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure we have the right ID</span>
+
+    <span class="c1"># Define the request to be made</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">https://jsonplaceholder.typicode.com/posts/1</span>
       <span class="na">method</span><span class="pi">:</span> <span class="s">GET</span>
+
+    <span class="c1"># ...and the expected response code and body</span>
     <span class="na">response</span><span class="pi">:</span>
       <span class="na">status_code</span><span class="pi">:</span> <span class="s">200</span>
       <span class="na">body</span><span class="pi">:</span>
@@ -72,7 +79,7 @@
 
 <p>…and you’re off! To see how it works in more detail take a look at the <a href="/examples">examples page</a> or check out the <a href="/documentation">full documentation</a>.</p>
 
-<h2 id="why-not-postman-insomnia-or-pyresttest">Why not Postman, Insomnia or pyresttest?</h2>
+<h2 id="why-not-postman-insomnia-or-pyresttest-etc">Why not Postman, Insomnia or pyresttest etc?</h2>
 
 <p>Tavern is a focused tool which does one thing well: automated testing of RESTful APIs.</p>
 
@@ -93,13 +100,22 @@
   <li>Better explanations of why a test failed</li>
 </ul>
 
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>Tavern makes use of several excellent open-source projects:</p>
+
+<ul>
+  <li><a href="https://docs.pytest.org/en/latest/">pytest</a>, the testing framework Tavern intergrates with</li>
+  <li><a href="http://docs.python-requests.org/en/master/">requests</a>, for HTTP requests</li>
+  <li><a href="http://yaml.org/">YAML</a> and <a href="https://github.com/yaml/pyyaml">pyyaml</a>, for the test syntax</li>
+  <li><a href="https://github.com/Grokzen/pykwalify">pykwalify</a>, for JSON schema validation</li>
+  <li><a href="https://github.com/jpadilla/pyjwt">pyjwt</a>, for decoding JSON Web Tokens</li>
+  <li><a href="https://github.com/borntyping/python-colorlog">colorlog</a>, for formatting terminal outputs</li>
+</ul>
+
 <h2 id="developed-and-maintained-by-overlock">Developed and maintained by <a href="https://overlock.io">Overlock</a></h2>
 
-<p>Overlock helps developers quickly find and fix bugs in distributed systems such as IoT deployments.</p>
-
-<p>It allows you to discover exceptions and faults in your IoT (Internet of Things) system by gathering together exception information from all areas of your deployment, whether it’s on end devices, gateways or servers. Simply add our daemon and start capturing everything you need to understand issues in development or production.</p>
-
-<p>Learn more and get access to the beta at <a href="https://overlock.io">overlock.io</a></p>
+<p>Overlock helps developers quickly find and fix bugs in distributed systems such as IoT deployments by gathering together exception information from end devices, gateways or servers. We’re currently in beta - find out more at <a href="https://overlock.io">overlock.io</a></p>
 
 
       <footer class="site-footer">
