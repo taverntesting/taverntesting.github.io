@@ -82,8 +82,7 @@ documentation](http://docs.python-requests.org/en/master/api/#requests.request).
 
 ### Response
 
-The **response** describes what we expect back. The obvious one is `status_code`
-- this should be an integer corresponding to the status code that we expect.
+The **response** describes what we expect back. The obvious one is `status_code` this should be an integer corresponding to the status code that we expect.
 
 There are a few keys for 'checking' the response:
 
