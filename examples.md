@@ -7,7 +7,7 @@ To show you just how simple a Tavern test can be, here's one which uses the JSON
 ```yaml
 test_name: Get some fake data from the JSON placeholder API
 
-steps:
+stages:
   - name: Make sure we have the right ID
     request:
       url: https://jsonplaceholder.typicode.com/posts/1
@@ -68,7 +68,11 @@ $ export FLASK_APP=server.py
 $ flask run
 ```
 
-There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more steps, and each step has a name, a request and an expected response.
+There are two key things to test here: first, that it successfully doubles
+numbers and second, that it returns the correct error codes and messages. To do
+this we will write two tests, one for the success case and one for the error
+case. Each test can contain one or more stages, and each stage has a name, a
+request and an expected response.
 
 ```yaml
 # test_server.tavern.yaml
@@ -77,7 +81,7 @@ There are two key things to test here: first, that it successfully doubles numbe
 
 test_name: Make sure server doubles number properly
 
-steps:
+stages:
   - name: Make sure number is returned correctly
     request:
       url: http://localhost:5000/double
@@ -95,7 +99,7 @@ steps:
 
 test_name: Check invalid inputs are handled
 
-steps:
+stages:
   - name: Make sure invalid numbers don't cause an error
     request:
       url: http://localhost:5000/double
@@ -159,7 +163,7 @@ $ echo $?
 0
 ```
 
-## 3) Multi-step tests
+## 3) Multi-stage tests
 
 The final example uses a more complex test server which requires the user to log in, save the token it returns and use it for all future requests. It also has a simple database so we can check that data we send to it is successfully returned.
 
@@ -170,7 +174,7 @@ To test this behaviour we can use multiple tests in a row, keeping track of vari
 ```yaml
 test_name: Make sure server saves and returns a number correctly
 
-steps:
+stages:
   - name: login
     request:
       url: http://localhost:5000/login

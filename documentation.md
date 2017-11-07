@@ -1,6 +1,130 @@
 # Documentation
 
-More documentation is coming soon. Watch this space!
+If you haven't already, it's worth looking through the [examples](/examples)
+before diving into this.
+
+## Anatomy of a test
+
+Taking the simple example:
+
+```yaml
+test_name: Get some fake data from the JSON placeholder API
+
+stages:
+  - name: Make sure we have the right ID
+    request:
+      url: https://jsonplaceholder.typicode.com/posts/1
+      method: GET
+    response:
+      status_code: 200
+      body:
+        id: 1
+      save:
+        body:
+          returned_id: id
+```
+
+If using the pytest plugin (the recommended way of using Tavern), this needs to
+be in a file called `test_x.tavern.yaml`, where `x` is a description of the
+contained tests.
+
+**test_name** is, as expected, the name of that test. If the pytest plugin is
+being used to run integration tests, this is what the test will show up as in
+the pytest report. eg:
+
+```
+tests/integration/test_simple.tavern.yaml::Get some fake data from the JSON placeholder API
+```
+
+This can then be selected with the `-k` flag to pytest - eg, pass `pytest -k fake`
+to run all tests with 'fake' in the name.
+
+**stages** is a list of the stages that make up the test. A simple test might
+just be to check that an endpoint returns a 401 with no login information. A
+more complicated one might be:
+
+1. Log in to server
+  - `POST` login information in body
+  - Expect login details to be returned in body
+2. Get user information
+  - `GET` with login information in `Authorization` header
+  - Expect user information returned in body
+3. Create a new resource with that user information
+  - `POST` with login information in `Authorization` header and user information in body
+  - Expect a 201 with the created resource in the body
+4. Make sure it's stored on the server
+  - `GET` with login information in `Authorization` header
+  - Expect the same information returned as in the previous step
+
+The **name** of each stage is a description of what is happening in that
+particular test.
+
+### Request
+
+The **request** describes what will be sent to the server. The keys for this are
+passed directly to the
+[requests](http://docs.python-requests.org/en/master/api/#requests.request)
+library (after preprocessing) - at the moment the only supported keys are:
+
+- `url` - a string, including the protocol, of the address of the server that
+  will be queried
+- `json` - a mapping of (possibly nested) key: value pairs/lists that will go into the
+  request body as application/json data.
+- `params` - a mapping of key: value pairs that will go into the query
+  parameters.
+- `data` - a mapping of key: value pairs that will go into the body as
+  application/x-www-url-formencoded data.
+- `headers` - a mapping of key: value pairs that will go into the headers.
+- `method` - one of GET, POST, PUT, or DELETE
+
+For more information, refer to the [requests
+documentation](http://docs.python-requests.org/en/master/api/#requests.request).
+
+### Response
+
+The **response** describes what we expect back. The obvious one is `status_code`
+- this should be an integer corresponding to the status code that we expect.
+
+There are a few keys for 'checking' the response:
+
+- `body` - Assuming the response is json, check the body against the values
+  given. Expects a mapping (possibly nested) key: value pairs/lists.
+- `headers` - a mapping of key: value pairs that will be checked against the
+  headers.
+- `redirect_query_params` - Checks the query parameters of a redirect url passed
+  in the `location` header (if one is returned). Expects a mapping of key: value
+  pairs. This can be useful for testing implementation of an OpenID connect
+  provider, where information about the request may be returned in redirect
+  query parameters.
+
+The **save** block can save values from the response for use in future requests.
+Things can be saved from the body, headers, or redirect query parameters. When
+used to save something from the json body, this can also access dictionaries
+and lists recursively. If the response is:
+
+```json
+{
+    "thing": {
+        "nested": [
+            1, 2, 3, 4
+        ]
+    }
+}
+```
+
+This can be saved into the value `first_val` with this response block:
+
+```yaml
+response:
+  save:
+    body:
+      fourth_val: thing.nested.0
+```
+
+There are other ways of saving things from the response body, explained below.
+
+For a more formal definition of the schema that the tests are validated against,
+check `tavern/schemas/tests.schema.yaml` in the main Tavern repository..
 
 ## External functions
 
@@ -103,6 +227,7 @@ Ideas for other helper functions which might be useful:
 - Making sure that the response matches a database schema
 - Making sure that an error returns the correct error text in the body
 - Decoding base64 data to extract some information for use in a future query
+- Validate templated html returned from an endpoint using an xml parser
 - etc.
 
 ## Anchors between documents
