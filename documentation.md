@@ -4,15 +4,15 @@ More documentation is coming soon. Watch this space!
 
 ## External functions
 
-There are two of these external functions built in to Tavern: `validate_jwt` and
+There are two external functions built in to Tavern: `validate_jwt` and
 `validate_pykwalify`.
 
-`validate_jwt` takes the key of the returned JWT in the body, and additional
-arguments that are passed directly to the `decode` method in the
+`validate_jwt` takes the key of the returned JWT in the body as `jwt_key`, and
+additional arguments that are passed directly to the `decode` method in the
 [PyJWT](https://github.com/jpadilla/pyjwt/blob/master/jwt/api_jwt.py#L59)
-library. **NOTE:** Make sure the keyword arguments you are passing are correct
-or PyJWT will silently ignore them. In future, this function may be changed to
-use a different library to avoid this issue.
+library. **NOTE: Make sure the keyword arguments you are passing are correct
+or PyJWT will silently ignore them. In future, this function will likely be
+changed to use a different library to avoid this issue.**
 
 ```yaml
 # Make sure the response contains a key called 'token', the value of which is a
@@ -102,7 +102,7 @@ Ideas for other helper functions which might be useful:
 
 - Making sure that the response matches a database schema
 - Making sure that an error returns the correct error text in the body
-- Making sure that a key is a valid uri
+- Decoding base64 data to extract some information for use in a future query
 - etc.
 
 ## Anchors between documents
@@ -206,7 +206,7 @@ stages:
         body:
           test_user_login_token: token
       body:
-    $ext:
+        $ext:
           function: tavern.testutils.helpers:validate_jwt
           extra_kwargs:
             jwt_key: "token"
@@ -230,6 +230,7 @@ stages:
 test_name: Make sure giving premium works
 
 stages:
+  # Use the same block to log in across documents
   - *test_user_login_anchor
 
   - name: Assert user does not have premium
@@ -254,6 +255,7 @@ stages:
 
   - name: Assert user now has premium
     request:
+      # Use the same block within one document
       <<: *has_premium_request_anchor
     response:
       status_code: 200
