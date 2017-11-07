@@ -89,6 +89,7 @@ There are a few keys for 'checking' the response:
 
 - `body` - Assuming the response is json, check the body against the values
   given. Expects a mapping (possibly nested) key: value pairs/lists.
+  This can also use an external check function, described further down.
 - `headers` - a mapping of key: value pairs that will be checked against the
   headers.
 - `redirect_query_params` - Checks the query parameters of a redirect url passed
