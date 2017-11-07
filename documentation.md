@@ -279,14 +279,17 @@ Including a file in every test can be done by using a `!include` directive:
 # includes.yaml
 ---
 
+# Each file should have a name and description
 name: Common test information
 description: Login information for test server
 
+# Variables should just be a mapping of key: value pairs
 variables:
   protocol: https
   host: www.server.com
   port: 1234
 ```
+
 ```yaml
 # tests.tavern.yaml
 ---
