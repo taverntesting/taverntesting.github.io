@@ -24,11 +24,13 @@ Next, install Tavern if you have not already:
 $ pip install tavern
 ```
 
-In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
+In most circumstances you will be using Tavern with pytest but you can also run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
 
 ```bash
 $ tavern-ci --in-file minimal.tavern.yaml
 ```
+
+Run `tavern-ci --help` for more usage information.
 
 ## 2) Testing a simple server
 
@@ -181,8 +183,8 @@ steps:
     response:
       status_code: 200
       body:
-        $validate_function:
-          function: tavern.util.validators:validate_jwt
+        $ext:
+          function: tavern.testutils.helpers:validate_jwt
           extra_kwargs:
             jwt_key: "token"
             key: CGQgaG7GYvTcpaQZqosLy4
@@ -265,38 +267,34 @@ headers:
   Authorization: "bearer {test_login_token:s}"
 ```
 
-### Validation functions
+### External functions
+
+Python functions can be called inside tests to perform operations on data which
+is more advanced than can be expressed in YAML. These are of the form:
 
 ```yaml
-response:
-  body:
-    $validate_function:
-      function: <path to module>:<name of function>
-      extra_kwargs:
-        <key>: <value>
-        <key>:
-          <nested key>: <value>
-          <nested key>: <value>
-```
-
-To use a validation function, add it to the response body inside a `$validate_function` key. You must specify the path to the module containing the function (for example, all built-in validation functions are located at `tavern.util.validators`) and the name of the function in the `function` key.
-
-The first argument of every validation function is the response, and further arguments can be passed in by defining them in `extra_kwargs`.
-
-There are two validation functions built in to Tavern: `validate_jwt` and `validate_pykwalify`.
-
-```yaml
-# validate_jwt example
-$validate_function:
-  function: tavern.util.validators:validate_jwt
+$ext:
+  function: <path to module>:<name of function>
   extra_kwargs:
-    jwt_key: "token"
-    key: CGQgaG7GYvTcpaQZqosLy4
-    options:
-      verify_signature: true
-      verify_aud: false
+    <key>: <value>
+    <key>:
+      <nested key>: <value>
+      <nested key>: <value>
 ```
+
+To use a python function as a validation function, add it to the response body,
+headers, or redirect query parameters block inside a `$ext` key. You must
+specify the path to the module containing the function (for example, all
+built-in validation functions are located at `tavern.testutils.helpers`) and the
+name of the function in the `function` key.
+
+The first argument of every validation function is the response, and further
+arguments can be passed in by defining them in `extra_args` and `extra_kwargs`.
+External functions can also be used for saving data for use in future tests.
 
 ## Further reading
 
-For more detailed information on how to use Tavern and how it works, take a look at the [documentation](/documentation). To see the source code, suggest improvements or even contribute a pull request check out the [GitHub repository](https://github.com/taverntesting/tavern).
+For more detailed information on how to use Tavern and how it works, take a look
+at the [documentation](/documentation). To see the source code, suggest
+improvements or even contribute a pull request check out the [GitHub
+repository](https://github.com/taverntesting/tavern).
