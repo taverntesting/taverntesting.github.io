@@ -37,7 +37,16 @@ stages:
 ```
 
 ```bash
-$ tavern-ci minimal_test.tavern.yaml
+$ tavern-ci --stdout minimal_test.tavern.yaml
+2017-11-08 16:17:00,152 [INFO]: (tavern.core:55) Running test : Get some fake data from the JSON placeholder API
+2017-11-08 16:17:00,153 [INFO]: (tavern.core:69) Running stage : Make sure we have the right ID
+2017-11-08 16:17:00,239 [INFO]: (tavern.core:73) Response: '<Response [200]>' ({
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+})
+2017-11-08 16:17:00,239 [INFO]: (tavern.printer:9) PASSED: Make sure we have the right ID [200]
 ```
 
 ## Why not Postman, Insomnia or pyresttest etc?
