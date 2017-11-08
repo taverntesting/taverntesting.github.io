@@ -7,7 +7,7 @@ To show you just how simple a Tavern test can be, here's one which uses the JSON
 ```yaml
 test_name: Get some fake data from the JSON placeholder API
 
-steps:
+stages:
   - name: Make sure we have the right ID
     request:
       url: https://jsonplaceholder.typicode.com/posts/1
@@ -24,11 +24,13 @@ Next, install Tavern if you have not already:
 $ pip install tavern
 ```
 
-In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
+In most circumstances you will be using Tavern with pytest but you can also run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
 
 ```bash
 $ tavern-ci --in-file minimal.tavern.yaml
 ```
+
+Run `tavern-ci --help` for more usage information.
 
 ## 2) Testing a simple server
 
@@ -66,7 +68,11 @@ $ export FLASK_APP=server.py
 $ flask run
 ```
 
-There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more steps, and each step has a name, a request and an expected response.
+There are two key things to test here: first, that it successfully doubles
+numbers and second, that it returns the correct error codes and messages. To do
+this we will write two tests, one for the success case and one for the error
+case. Each test can contain one or more stages, and each stage has a name, a
+request and an expected response.
 
 ```yaml
 # test_server.tavern.yaml
@@ -75,7 +81,7 @@ There are two key things to test here: first, that it successfully doubles numbe
 
 test_name: Make sure server doubles number properly
 
-steps:
+stages:
   - name: Make sure number is returned correctly
     request:
       url: http://localhost:5000/double
@@ -93,7 +99,7 @@ steps:
 
 test_name: Check invalid inputs are handled
 
-steps:
+stages:
   - name: Make sure invalid numbers don't cause an error
     request:
       url: http://localhost:5000/double
@@ -157,7 +163,7 @@ $ echo $?
 0
 ```
 
-## 3) Multi-step tests
+## 3) Multi-stage tests
 
 The final example uses a more complex test server which requires the user to log in, save the token it returns and use it for all future requests. It also has a simple database so we can check that data we send to it is successfully returned.
 
@@ -168,7 +174,7 @@ To test this behaviour we can use multiple tests in a row, keeping track of vari
 ```yaml
 test_name: Make sure server saves and returns a number correctly
 
-steps:
+stages:
   - name: login
     request:
       url: http://localhost:5000/login
@@ -181,8 +187,8 @@ steps:
     response:
       status_code: 200
       body:
-        $validate_function:
-          function: tavern.util.validators:validate_jwt
+        $ext:
+          function: tavern.testutils.helpers:validate_jwt
           extra_kwargs:
             jwt_key: "token"
             key: CGQgaG7GYvTcpaQZqosLy4
@@ -255,48 +261,48 @@ save:
 ### Using saved data
 
 ```yaml
-<key>: {<variable name>:<type code>}
+<key>: "{<variable name>:<type code>}"
 ```
 
-Saved data can be used in later tests using Python's [string formatting syntax](https://docs.python.org/2/library/string.html#format-string-syntax). The variable to be used is encased in curly brackets and an optional [type code](https://docs.python.org/2/library/string.html#format-specification-mini-language) can be passed after a colon
+Saved data can be used in later tests using Python's [string formatting
+syntax](https://docs.python.org/2/library/string.html#format-string-syntax). The
+variable to be used is encased in curly brackets and an optional
+[type code](https://docs.python.org/2/library/string.html#format-specification-mini-language)
+can be passed after a colon.
 
 ```yaml
 headers:
-  Authorization: "bearer {test_login_token:s}"
+  Authorization: "Bearer {test_login_token:s}"
 ```
 
-### Validation functions
+### External functions
+
+Python functions can be called inside tests to perform operations on data which
+is more advanced than can be expressed in YAML. These are of the form:
 
 ```yaml
-response:
-  body:
-    $validate_function:
-      function: <path to module>:<name of function>
-      extra_kwargs:
-        <key>: <value>
-        <key>:
-          <nested key>: <value>
-          <nested key>: <value>
-```
-
-To use a validation function, add it to the response body inside a `$validate_function` key. You must specify the path to the module containing the function (for example, all built-in validation functions are located at `tavern.util.validators`) and the name of the function in the `function` key.
-
-The first argument of every validation function is the response, and further arguments can be passed in by defining them in `extra_kwargs`.
-
-There are two validation functions built in to Tavern: `validate_jwt` and `validate_pykwalify`.
-
-```yaml
-# validate_jwt example
-$validate_function:
-  function: tavern.util.validators:validate_jwt
+$ext:
+  function: <path to module>:<name of function>
   extra_kwargs:
-    jwt_key: "token"
-    key: CGQgaG7GYvTcpaQZqosLy4
-    options:
-      verify_signature: true
-      verify_aud: false
+    <key>: <value>
+    <key>:
+      <nested key>: <value>
+      <nested key>: <value>
 ```
+
+To use a python function as a validation function, add it to the response body,
+headers, or redirect query parameters block inside a `$ext` key. You must
+specify the path to the module containing the function (for example, all
+built-in validation functions are located at `tavern.testutils.helpers`) and the
+name of the function in the `function` key.
+
+The first argument of every validation function is the response, and further
+arguments can be passed in by defining them in `extra_args` and `extra_kwargs`.
+External functions can also be used for saving data for use in future tests.
 
 ## Further reading
 
-For more detailed information on how to use Tavern and how it works, take a look at the [documentation](/documentation). To see the source code, suggest improvements or even contribute a pull request check out the [GitHub repository](https://github.com/taverntesting/tavern).
+For more detailed information on how to use Tavern and how it works, take a look
+at the [documentation](/documentation). To see the source code, suggest
+improvements or even contribute a pull request check out the [GitHub
+repository](https://github.com/taverntesting/tavern).

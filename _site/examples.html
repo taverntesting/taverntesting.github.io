@@ -20,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href="https://fonts.googleapis.com/css?family=Palanquin" rel="stylesheet"> 
-    <link rel="stylesheet" href="/assets/css/style.css?v=98b7f0518de06b64f30300623caa6d25f9f68115">
+    <link rel="stylesheet" href="/assets/css/style.css?v=e05c691e48e0b8d49e3ccd808479ea39e13272d1">
     <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.png">
   </head>
   <body>
@@ -46,7 +46,7 @@
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">test_name</span><span class="pi">:</span> <span class="s">Get some fake data from the JSON placeholder API</span>
 
-<span class="na">steps</span><span class="pi">:</span>
+<span class="na">stages</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure we have the right ID</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">https://jsonplaceholder.typicode.com/posts/1</span>
@@ -62,10 +62,12 @@
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip install tavern
 </code></pre></div></div>
 
-<p>In most circumstances you will be using Tavern with pytest but for now you can run it using the Tavern command-line interface, <code class="highlighter-rouge">tavern-ci</code>, which is installed along with Tavern:</p>
+<p>In most circumstances you will be using Tavern with pytest but you can also run it using the Tavern command-line interface, <code class="highlighter-rouge">tavern-ci</code>, which is installed along with Tavern:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>tavern-ci <span class="nt">--in-file</span> minimal.tavern.yaml
 </code></pre></div></div>
+
+<p>Run <code class="highlighter-rouge">tavern-ci --help</code> for more usage information.</p>
 
 <h2 id="2-testing-a-simple-server">2) Testing a simple server</h2>
 
@@ -101,7 +103,11 @@
 <span class="nv">$ </span>flask run
 </code></pre></div></div>
 
-<p>There are two key things to test here: first, that it successfully doubles numbers and second, that it returns the correct error codes and messages. To do this we will write two tests, one for the success case and one for the error case. Each test can contain one or more steps, and each step has a name, a request and an expected response.</p>
+<p>There are two key things to test here: first, that it successfully doubles
+numbers and second, that it returns the correct error codes and messages. To do
+this we will write two tests, one for the success case and one for the error
+case. Each test can contain one or more stages, and each stage has a name, a
+request and an expected response.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_server.tavern.yaml</span>
 
@@ -109,7 +115,7 @@
 
 <span class="na">test_name</span><span class="pi">:</span> <span class="s">Make sure server doubles number properly</span>
 
-<span class="na">steps</span><span class="pi">:</span>
+<span class="na">stages</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure number is returned correctly</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/double</span>
@@ -127,7 +133,7 @@
 
 <span class="na">test_name</span><span class="pi">:</span> <span class="s">Check invalid inputs are handled</span>
 
-<span class="na">steps</span><span class="pi">:</span>
+<span class="na">stages</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Make sure invalid numbers don't cause an error</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/double</span>
@@ -188,7 +194,7 @@ test_server.tavern.yaml ..
 0
 </code></pre></div></div>
 
-<h2 id="3-multi-step-tests">3) Multi-step tests</h2>
+<h2 id="3-multi-stage-tests">3) Multi-stage tests</h2>
 
 <p>The final example uses a more complex test server which requires the user to log in, save the token it returns and use it for all future requests. It also has a simple database so we can check that data we send to it is successfully returned.</p>
 
@@ -198,7 +204,7 @@ test_server.tavern.yaml ..
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">test_name</span><span class="pi">:</span> <span class="s">Make sure server saves and returns a number correctly</span>
 
-<span class="na">steps</span><span class="pi">:</span>
+<span class="na">stages</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">login</span>
     <span class="na">request</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s">http://localhost:5000/login</span>
@@ -211,8 +217,8 @@ test_server.tavern.yaml ..
     <span class="na">response</span><span class="pi">:</span>
       <span class="na">status_code</span><span class="pi">:</span> <span class="s">200</span>
       <span class="na">body</span><span class="pi">:</span>
-        <span class="s">$validate_function</span><span class="pi">:</span>
-          <span class="na">function</span><span class="pi">:</span> <span class="s">tavern.util.validators:validate_jwt</span>
+        <span class="s">$ext</span><span class="pi">:</span>
+          <span class="na">function</span><span class="pi">:</span> <span class="s">tavern.testutils.helpers:validate_jwt</span>
           <span class="na">extra_kwargs</span><span class="pi">:</span>
             <span class="na">jwt_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">token"</span>
             <span class="na">key</span><span class="pi">:</span> <span class="s">CGQgaG7GYvTcpaQZqosLy4</span>
@@ -282,48 +288,49 @@ test_server.tavern.yaml ..
 
 <h3 id="using-saved-data">Using saved data</h3>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">&lt;key&gt;</span><span class="pi">:</span> <span class="pi">{</span><span class="nv">&lt;variable name&gt;</span><span class="pi">:</span><span class="nv">&lt;type code&gt;</span><span class="pi">}</span>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">&lt;key&gt;</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{&lt;variable</span><span class="nv"> </span><span class="s">name&gt;:&lt;type</span><span class="nv"> </span><span class="s">code&gt;}"</span>
 </code></pre></div></div>
 
-<p>Saved data can be used in later tests using Python’s <a href="https://docs.python.org/2/library/string.html#format-string-syntax">string formatting syntax</a>. The variable to be used is encased in curly brackets and an optional <a href="https://docs.python.org/2/library/string.html#format-specification-mini-language">type code</a> can be passed after a colon</p>
+<p>Saved data can be used in later tests using Python’s <a href="https://docs.python.org/2/library/string.html#format-string-syntax">string formatting
+syntax</a>. The
+variable to be used is encased in curly brackets and an optional
+<a href="https://docs.python.org/2/library/string.html#format-specification-mini-language">type code</a>
+can be passed after a colon.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">headers</span><span class="pi">:</span>
-  <span class="na">Authorization</span><span class="pi">:</span> <span class="s2">"</span><span class="s">bearer</span><span class="nv"> </span><span class="s">{test_login_token:s}"</span>
+  <span class="na">Authorization</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Bearer</span><span class="nv"> </span><span class="s">{test_login_token:s}"</span>
 </code></pre></div></div>
 
-<h3 id="validation-functions">Validation functions</h3>
+<h3 id="external-functions">External functions</h3>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">response</span><span class="pi">:</span>
-  <span class="na">body</span><span class="pi">:</span>
-    <span class="s">$validate_function</span><span class="pi">:</span>
-      <span class="na">function</span><span class="pi">:</span> <span class="s">&lt;path to module&gt;:&lt;name of function&gt;</span>
-      <span class="na">extra_kwargs</span><span class="pi">:</span>
-        <span class="s">&lt;key&gt;</span><span class="pi">:</span> <span class="s">&lt;value&gt;</span>
-        <span class="s">&lt;key&gt;</span><span class="pi">:</span>
-          <span class="s">&lt;nested key&gt;</span><span class="pi">:</span> <span class="s">&lt;value&gt;</span>
-          <span class="s">&lt;nested key&gt;</span><span class="pi">:</span> <span class="s">&lt;value&gt;</span>
-</code></pre></div></div>
+<p>Python functions can be called inside tests to perform operations on data which
+is more advanced than can be expressed in YAML. These are of the form:</p>
 
-<p>To use a validation function, add it to the response body inside a <code class="highlighter-rouge">$validate_function</code> key. You must specify the path to the module containing the function (for example, all built-in validation functions are located at <code class="highlighter-rouge">tavern.util.validators</code>) and the name of the function in the <code class="highlighter-rouge">function</code> key.</p>
-
-<p>The first argument of every validation function is the response, and further arguments can be passed in by defining them in <code class="highlighter-rouge">extra_kwargs</code>.</p>
-
-<p>There are two validation functions built in to Tavern: <code class="highlighter-rouge">validate_jwt</code> and <code class="highlighter-rouge">validate_pykwalify</code>.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># validate_jwt example</span>
-<span class="s">$validate_function</span><span class="pi">:</span>
-  <span class="na">function</span><span class="pi">:</span> <span class="s">tavern.util.validators:validate_jwt</span>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">$ext</span><span class="pi">:</span>
+  <span class="na">function</span><span class="pi">:</span> <span class="s">&lt;path to module&gt;:&lt;name of function&gt;</span>
   <span class="na">extra_kwargs</span><span class="pi">:</span>
-    <span class="na">jwt_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">token"</span>
-    <span class="na">key</span><span class="pi">:</span> <span class="s">CGQgaG7GYvTcpaQZqosLy4</span>
-    <span class="na">options</span><span class="pi">:</span>
-      <span class="na">verify_signature</span><span class="pi">:</span> <span class="no">true</span>
-      <span class="na">verify_aud</span><span class="pi">:</span> <span class="no">false</span>
+    <span class="s">&lt;key&gt;</span><span class="pi">:</span> <span class="s">&lt;value&gt;</span>
+    <span class="s">&lt;key&gt;</span><span class="pi">:</span>
+      <span class="s">&lt;nested key&gt;</span><span class="pi">:</span> <span class="s">&lt;value&gt;</span>
+      <span class="s">&lt;nested key&gt;</span><span class="pi">:</span> <span class="s">&lt;value&gt;</span>
 </code></pre></div></div>
+
+<p>To use a python function as a validation function, add it to the response body,
+headers, or redirect query parameters block inside a <code class="highlighter-rouge">$ext</code> key. You must
+specify the path to the module containing the function (for example, all
+built-in validation functions are located at <code class="highlighter-rouge">tavern.testutils.helpers</code>) and the
+name of the function in the <code class="highlighter-rouge">function</code> key.</p>
+
+<p>The first argument of every validation function is the response, and further
+arguments can be passed in by defining them in <code class="highlighter-rouge">extra_args</code> and <code class="highlighter-rouge">extra_kwargs</code>.
+External functions can also be used for saving data for use in future tests.</p>
 
 <h2 id="further-reading">Further reading</h2>
 
-<p>For more detailed information on how to use Tavern and how it works, take a look at the <a href="/documentation">documentation</a>. To see the source code, suggest improvements or even contribute a pull request check out the <a href="https://github.com/taverntesting/tavern">GitHub repository</a>.</p>
+<p>For more detailed information on how to use Tavern and how it works, take a look
+at the <a href="/documentation">documentation</a>. To see the source code, suggest
+improvements or even contribute a pull request check out the <a href="https://github.com/taverntesting/tavern">GitHub
+repository</a>.</p>
 
 
       <footer class="site-footer">

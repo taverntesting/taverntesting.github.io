@@ -3,9 +3,22 @@
 If you haven't already, it's worth looking through the [examples](/examples)
 before diving into this.
 
+## Contents
+
+- [Anatomy of a test](#anatomy-of-a-test)
+    - [Request](#request)
+    - [Response](#response)
+- [Calling external functions](#calling-external-functions)
+    - [Built-in validators](#built-in-validators)
+    - [Saving data with external functions](#saving-data-with-external-functions)
+- [Anchors between documents](#anchors-between-documents)
+- [Including external files](#including-external-files)
+    - [Including external files via the command line](#including-external-files-via-the-command-line)
+
 ## Anatomy of a test
 
-Taking the simple example:
+Tests are defined in YAML with a **test_name**, one or more **stages**, each of
+which has a **name**, a **request** and a **response**. Taking the simple example:
 
 ```yaml
 test_name: Get some fake data from the JSON placeholder API
@@ -30,13 +43,13 @@ contained tests.
 
 **test_name** is, as expected, the name of that test. If the pytest plugin is
 being used to run integration tests, this is what the test will show up as in
-the pytest report. eg:
+the pytest report, for example:
 
 ```
 tests/integration/test_simple.tavern.yaml::Get some fake data from the JSON placeholder API
 ```
 
-This can then be selected with the `-k` flag to pytest - eg, pass `pytest -k fake`
+This can then be selected with the `-k` flag to pytest - e.g. pass `pytest -k fake`
 to run all tests with 'fake' in the name.
 
 **stages** is a list of the stages that make up the test. A simple test might
@@ -68,24 +81,26 @@ library (after preprocessing) - at the moment the only supported keys are:
 
 - `url` - a string, including the protocol, of the address of the server that
   will be queried
-- `json` - a mapping of (possibly nested) key: value pairs/lists that will go into the
-  request body as application/json data.
+- `json` - a mapping of (possibly nested) key: value pairs/lists that will be
+  converted to JSON and sent as the request body.
 - `params` - a mapping of key: value pairs that will go into the query
   parameters.
 - `data` - a mapping of key: value pairs that will go into the body as
   application/x-www-url-formencoded data.
-- `headers` - a mapping of key: value pairs that will go into the headers.
-- `method` - one of GET, POST, PUT, or DELETE
+- `headers` - a mapping of key: value pairs that will go into the headers. Defaults
+  to adding a `content-type: application/json` header.
+- `method` - one of GET, POST, PUT, or DELETE. Defaults to GET if not defined
 
 For more information, refer to the [requests
 documentation](http://docs.python-requests.org/en/master/api/#requests.request).
 
 ### Response
 
-The **response** describes what we expect back. The obvious one is `status_code` this should be an integer corresponding to the status code that we expect.
+The **response** describes what we expect back. There are a few keys for verifying
+the response:
 
-There are a few keys for 'checking' the response:
-
+- `status_code` - an integer corresponding to the status code that we expect.
+  Defaults to `200` if not defined.
 - `body` - Assuming the response is json, check the body against the values
   given. Expects a mapping (possibly nested) key: value pairs/lists.
   This can also use an external check function, described further down.
@@ -121,12 +136,20 @@ response:
       fourth_val: thing.nested.0
 ```
 
-There are other ways of saving things from the response body, explained below.
+It is also possible to save data using function calls, explained below.
 
 For a more formal definition of the schema that the tests are validated against,
-check `tavern/schemas/tests.schema.yaml` in the main Tavern repository..
+check `tavern/schemas/tests.schema.yaml` in the main Tavern repository.
 
-## External functions
+## Calling external functions
+
+Not every response can be validated simply by checking the values of keys, so with
+Tavern you can call external functions to validate responses and save decoded data.
+You can write your own functions or use those built in to Tavern. Each function
+should take the response as its first argument, and you can pass extra arguments
+using the **extra_kwargs** key.
+
+### Built-in validators
 
 There are two external functions built in to Tavern: `validate_jwt` and
 `validate_pykwalify`.
@@ -135,7 +158,7 @@ There are two external functions built in to Tavern: `validate_jwt` and
 additional arguments that are passed directly to the `decode` method in the
 [PyJWT](https://github.com/jpadilla/pyjwt/blob/master/jwt/api_jwt.py#L59)
 library. **NOTE: Make sure the keyword arguments you are passing are correct
-or PyJWT will silently ignore them. In future, this function will likely be
+or PyJWT will silently ignore them. In thr future, this function will likely be
 changed to use a different library to avoid this issue.**
 
 ```yaml
@@ -181,10 +204,30 @@ response:
 
 ### Saving data with external functions
 
-External functions can also be used to save data from the response. For example,
-the built in `validate_jwt` function also returns the decoded token as a
-dictionary wrapped in a [Box](https://pypi.python.org/pypi/python-box/) object,
-which allows dot-notation access to members. This means that the contents of the
+An external function can also be used to save data from the response. To do this,
+the function must return a dict where each key either points to a single value or
+to an object which is accessible using dot notation. The easiest way to do this
+is to return a [Box](https://pypi.python.org/pypi/python-box/) object. Each key in
+the returned object will be saved as if it had been specified separately in the
+**save** object. The function is called in the same way as a validator function,
+in the **$ext** key of the **save** object.
+
+For example, consider a function which returns the dict `{ 'a': 'value' }` and a
+**save** object which look like this:
+
+```
+save:
+  body:
+    $ext:
+      function: utils:test_function
+    b: user.id
+```
+
+In this case, both `{a}` and `{b}` are available for use in later requests.
+
+For a more practical example, the built in `validate_jwt` function also returns the
+decoded token as a dictionary wrapped in a [Box](https://pypi.python.org/pypi/python-box/)
+object, which allows dot-notation access to members. This means that the contents of the
 token can be used for future requests.
 
 For example, if our server saves the user ID in the 'sub' field of the JWT:
@@ -200,7 +243,7 @@ For example, if our server saves the user ID in the 'sub' field of the JWT:
     status_code: 200
     body:
       # make sure a token exists
-      $ext: &validate_jwt_anchor
+      $ext:
         function: tavern.testutils.helpers:validate_jwt
         extra_kwargs:
           jwt_key: "token"
@@ -208,11 +251,14 @@ For example, if our server saves the user ID in the 'sub' field of the JWT:
             verify_signature: false
     save:
       body:
-        # Saves a jwt token returned as 'token' in the body as 'jwt' in the test
-        # configuration for use in future tests
+        # Saves a jwt token returned as 'token' in the body as 'jwt'
+        # in the test configuration for use in future tests
         $ext:
-          # Use the same block
-          <<: *validate_jwt_anchor
+          function: tavern.testutils.helpers:validate_jwt
+          extra_kwargs:
+            jwt_key: "token"
+            options:
+              verify_signature: false
 
 - name: Get user information
   request:
@@ -227,43 +273,67 @@ Ideas for other helper functions which might be useful:
 - Making sure that the response matches a database schema
 - Making sure that an error returns the correct error text in the body
 - Decoding base64 data to extract some information for use in a future query
-- Validate templated html returned from an endpoint using an xml parser
+- Validate templated HTML returned from an endpoint using an XML parser
 - etc.
 
-## Anchors between documents
+## Resuing requests and YAML fragments
 
 A lot of tests will require using the same step multiple times, such as logging
 in to a server before running tests or simply running the same request twice in
 a row to make sure the same (or a different) response is returned.
 
-Anchors in YAML can be used to do things like this within the same document:
+Anchors are a feature of YAML which allows you to reuse parts of the code. Define
+an anchor using  `&name_of_anchor`. This can then be assigned to another object
+using `new_object: *name_or_anchor`, or they can be used to extend objects using
+`<<: *name_of_anchor`.
 
 ```yaml
 # input.yaml
 ---
-top: &top_anchor
+first: &top_anchor
   a: b
   c: d
-  e: f
 
-bottom:
+second: *top_anchor
+
+third:
   <<: *top_anchor
+  c: overwritten
+  e: f
 ```
-If we load this file with a script like this:
+
+If we convert this to JSON, for example with a script like this:
 
 ```python
 #!/usr/bin/env python
 
 # load.py
 import yaml
+import json
 
 with open("input.yaml", "r") as yfile:
-    print(yaml.load(yfile.read()))
+    for doc in yaml.load_all(yfile.read()):
+        print(json.dumps(doc, indent=2))
 ```
-We get:
+
+We get something like the following:
+
 ```
-$ python test.py
-{'top': {'a': 'b', 'e': 'f', 'c': 'd'}, 'bottom': {'a': 'b', 'e': 'f', 'c': 'd'}}
+{
+  'first': {
+    'a': 'b',
+    'c': 'd'
+  },
+  'second': {
+    'a': 'b',
+    'c': 'd'
+  },
+  'third': {
+    'a': 'b',
+    'c': 'overwritten',
+    'e': 'f'
+  }
+}
 ```
 
 This does not however work if there are different documents in the yaml file:
@@ -271,45 +341,65 @@ This does not however work if there are different documents in the yaml file:
 ```yaml
 # input.yaml
 ---
-top: &top_anchor
+first: &top_anchor
   a: b
   c: d
-  e: f
+
+second: *top_anchor
 
 ---
 
-bottom:
+third:
   <<: *top_anchor
+  c: overwritten
+  e: f
 ```
 
 ```
 $ python test.py
+{
+  "second": {
+    "c": "d",
+    "a": "b"
+  },
+  "first": {
+    "c": "d",
+    "a": "b"
+  }
+}
 Traceback (most recent call last):
-  File "test.py", line 4, in <module>
-    print(yaml.load(yfile.read()))
-  File "/home/michael/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/__init__.py", line 72, in load
-    return loader.get_single_data()
-  File "/home/michael/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/constructor.py", line 35, in get_single_data
-    node = self.get_single_node()
-  File "/home/michael/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 43, in get_single_node
-    event.start_mark)
-yaml.composer.ComposerError: expected a single document in the stream
-  in "<unicode string>", line 3, column 1:
-    top: &top_anchor
-    ^
-but found another document
-  in "<unicode string>", line 8, column 1:
-    ---
-    ^
+  File "test.py", line 8, in <module>
+    for doc in yaml.load_all(yfile.read()):
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/__init__.py", line 84, in load_all
+    yield loader.get_data()
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/constructor.py", line 31, in get_data
+    return self.construct_document(self.get_node())
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 27, in get_node
+    return self.compose_document()
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 55, in compose_document
+    node = self.compose_node(None, None)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 133, in compose_mapping_node
+    item_value = self.compose_node(node, item_key)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 133, in compose_mapping_node
+    item_value = self.compose_node(node, item_key)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 69, in compose_node
+    % anchor, event.start_mark)
+yaml.composer.ComposerError: found undefined alias 'top_anchor'
+  in "<unicode string>", line 12, column 7:
+      <<: *top_anchor
 ```
 
 This poses a bit of a problem for running our integration tests. If we want to
-log in at the beginning of each test, or if we want to qury some user
+log in at the beginning of each test, or if we want to query some user
 information which is then operated on for each test, we don't want to copy paste
 the same code within the same file.
 
-For this reason, Tavern will preserve anchors across documents **within the same
-file**. Then we can do something more like this:
+For this reason, Tavern will override the default YAML behaviour and preserve anchors
+across documents **within the same file**. Then we can do something more like this:
 
 ```yaml
 ---
@@ -392,7 +482,7 @@ stages:
 
 Even with being able to use anchors within the same file, there is often some
 data which either you want to keep in a separate (possibly autogenerated) file,
-or is used on every test (eg, login information). You might also want to run the
+or is used on every test (e.g. login information). You might also want to run the
 same tests with different sets of input data.
 
 Because of this, external files can also be included which contain simple
