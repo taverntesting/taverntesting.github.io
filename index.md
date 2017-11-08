@@ -25,8 +25,8 @@ stages:
   - name: Make sure we have the right ID
 
     # Define the request to be made...
-      url: https://jsonplaceholder.typicode.com/posts/1
-      method: GET
+    url: https://jsonplaceholder.typicode.com/posts/1
+    method: GET
 
     # ...and the expected response code and body
     response:
