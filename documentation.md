@@ -212,18 +212,37 @@ the returned object will be saved as if it had been specified separately in the
 **save** object. The function is called in the same way as a validator function,
 in the **$ext** key of the **save** object.
 
-For example, consider a function which returns the dict `{ 'a': 'value' }` and a
-**save** object which look like this:
+Say that we have a server which returns a response like this:
 
+```json
+{
+    "user": {
+        "name": "John Smith",
+        "id": "abcdef12345",
+    }
+}
 ```
+
+If our test function extracts the key `name` from the response body:
+
+```python
+# utils.py
+def test_function(response):
+    return {"test_user_name": response.json()["user"]["name"]}
+```
+
+We would use it in the **save** object like this:
+
+```yaml
 save:
+  $ext:
+    function: utils:test_function
   body:
-    $ext:
-      function: utils:test_function
-    b: user.id
+    test_user_id: user.id
 ```
 
-In this case, both `{a}` and `{b}` are available for use in later requests.
+In this case, both `{test_user_name}` and `{test_uer_id}` are available for use
+in later requests.
 
 For a more practical example, the built in `validate_jwt` function also returns the
 decoded token as a dictionary wrapped in a [Box](https://pypi.python.org/pypi/python-box/)
@@ -242,7 +261,7 @@ For example, if our server saves the user ID in the 'sub' field of the JWT:
   response:
     status_code: 200
     body:
-      # make sure a token exists
+      # Make sure a token exists
       $ext:
         function: tavern.testutils.helpers:validate_jwt
         extra_kwargs:
@@ -250,15 +269,14 @@ For example, if our server saves the user ID in the 'sub' field of the JWT:
           options:
             verify_signature: false
     save:
-      body:
-        # Saves a jwt token returned as 'token' in the body as 'jwt'
-        # in the test configuration for use in future tests
-        $ext:
-          function: tavern.testutils.helpers:validate_jwt
-          extra_kwargs:
-            jwt_key: "token"
-            options:
-              verify_signature: false
+      # Saves a jwt token returned as 'token' in the body as 'jwt'
+      # in the test configuration for use in future tests
+      $ext:
+        function: tavern.testutils.helpers:validate_jwt
+        extra_kwargs:
+          jwt_key: "token"
+          options:
+            verify_signature: false
 
 - name: Get user information
   request:
