@@ -208,7 +208,7 @@ An external function can also be used to save data from the response. To do this
 the function must return a dict where each key either points to a single value or
 to an object which is accessible using dot notation. The easiest way to do this
 is to return a [Box](https://pypi.python.org/pypi/python-box/) object. Each key in
-the returned object will be saved as if it had been specified separately in the 
+the returned object will be saved as if it had been specified separately in the
 **save** object. The function is called in the same way as a validator function,
 in the **$ext** key of the **save** object.
 
@@ -220,13 +220,13 @@ save:
   body:
     $ext:
       function: utils:test_function
-    b: user.id 
+    b: user.id
 ```
 
 In this case, both `{a}` and `{b}` are available for use in later requests.
 
-For a more practical example, the built in `validate_jwt` function also returns the 
-decoded token as a dictionary wrapped in a [Box](https://pypi.python.org/pypi/python-box/) 
+For a more practical example, the built in `validate_jwt` function also returns the
+decoded token as a dictionary wrapped in a [Box](https://pypi.python.org/pypi/python-box/)
 object, which allows dot-notation access to members. This means that the contents of the
 token can be used for future requests.
 
@@ -312,10 +312,11 @@ import yaml
 import json
 
 with open("input.yaml", "r") as yfile:
-    print(json.dumps(yaml.load(yfile.read()), indent=2))
+    for doc in yaml.load_all(yfile.read()):
+        print(json.dumps(doc, indent=2))
 ```
 
-We get the following:
+We get something like the following:
 
 ```
 {
@@ -340,36 +341,56 @@ This does not however work if there are different documents in the yaml file:
 ```yaml
 # input.yaml
 ---
-top: &top_anchor
+first: &top_anchor
   a: b
   c: d
-  e: f
+
+second: *top_anchor
 
 ---
 
-bottom:
+third:
   <<: *top_anchor
+  c: overwritten
+  e: f
 ```
 
 ```
 $ python test.py
+{
+  "second": {
+    "c": "d",
+    "a": "b"
+  },
+  "first": {
+    "c": "d",
+    "a": "b"
+  }
+}
 Traceback (most recent call last):
-  File "test.py", line 4, in <module>
-    print(yaml.load(yfile.read()))
-  File "/home/michael/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/__init__.py", line 72, in load
-    return loader.get_single_data()
-  File "/home/michael/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/constructor.py", line 35, in get_single_data
-    node = self.get_single_node()
-  File "/home/michael/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 43, in get_single_node
-    event.start_mark)
-yaml.composer.ComposerError: expected a single document in the stream
-  in "<unicode string>", line 3, column 1:
-    top: &top_anchor
-    ^
-but found another document
-  in "<unicode string>", line 8, column 1:
-    ---
-    ^
+  File "test.py", line 8, in <module>
+    for doc in yaml.load_all(yfile.read()):
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/__init__.py", line 84, in load_all
+    yield loader.get_data()
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/constructor.py", line 31, in get_data
+    return self.construct_document(self.get_node())
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 27, in get_node
+    return self.compose_document()
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 55, in compose_document
+    node = self.compose_node(None, None)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 133, in compose_mapping_node
+    item_value = self.compose_node(node, item_key)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 133, in compose_mapping_node
+    item_value = self.compose_node(node, item_key)
+  File "/home/cooldeveloper/.virtualenvs/tavern/lib/python3.5/site-packages/yaml/composer.py", line 69, in compose_node
+    % anchor, event.start_mark)
+yaml.composer.ComposerError: found undefined alias 'top_anchor'
+  in "<unicode string>", line 12, column 7:
+      <<: *top_anchor
 ```
 
 This poses a bit of a problem for running our integration tests. If we want to
