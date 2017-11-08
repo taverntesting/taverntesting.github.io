@@ -20,8 +20,8 @@ $ pip install tavern
 # Every test file has one or more tests...
 test_name: Get some fake data from the JSON placeholder API
 
-# ...and each test has one or more steps (e.g. an HTTP request)
-steps:
+# ...and each test has one or more stages (e.g. an HTTP request)
+stages:
   - name: Make sure we have the right ID
 
     # Define the request to be made...
