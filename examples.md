@@ -27,7 +27,7 @@ $ pip install tavern
 In most circumstances you will be using Tavern with pytest but you can also run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
 
 ```bash
-$ tavern-ci --in-file minimal.tavern.yaml
+$ tavern-ci minimal.tavern.yaml
 ```
 
 Run `tavern-ci --help` for more usage information.
@@ -158,7 +158,7 @@ if not success:
 The command line tool is useful for bash scripting, for example if you want to verify that an API is works before deploying it, or for cron jobs. 
 
 ```bash
-$ tavern-ci --in-file test_server.tavern.yaml
+$ tavern-ci test_server.tavern.yaml
 $ echo $?
 0
 ```
