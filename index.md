@@ -39,8 +39,6 @@ steps:
 $ tavern-ci --in-file minimal_test.tavern.yaml
 ```
 
-...and you're off! To see how it works in more detail take a look at the [examples page](/examples) or check out the [full documentation](/documentation).
-
 ## Why not Postman, Insomnia or pyresttest etc?
 
 Tavern is a focused tool which does one thing well: automated testing of RESTful APIs.
@@ -65,7 +63,7 @@ Tavern makes use of several excellent open-source projects:
 - [pytest](https://docs.pytest.org/en/latest/), the testing framework Tavern intergrates with
 - [requests](http://docs.python-requests.org/en/master/), for HTTP requests
 - [YAML](http://yaml.org/) and [pyyaml](https://github.com/yaml/pyyaml), for the test syntax
-- [pykwalify](https://github.com/Grokzen/pykwalify), for JSON schema validation
+- [pykwalify](https://github.com/Grokzen/pykwalify), for YAML schema validation
 - [pyjwt](https://github.com/jpadilla/pyjwt), for decoding JSON Web Tokens
 - [colorlog](https://github.com/borntyping/python-colorlog), for formatting terminal outputs
 
