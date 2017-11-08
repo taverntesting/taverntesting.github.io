@@ -36,7 +36,7 @@ stages:
 ```
 
 ```bash
-$ tavern-ci --in-file minimal_test.tavern.yaml
+$ tavern-ci minimal_test.tavern.yaml
 ```
 
 ## Why not Postman, Insomnia or pyresttest etc?
