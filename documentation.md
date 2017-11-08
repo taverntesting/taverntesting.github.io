@@ -309,12 +309,13 @@ If we convert this to JSON, for example with a script like this:
 
 # load.py
 import yaml
+import json
 
 with open("input.yaml", "r") as yfile:
-    print(yaml.load(yfile.read()))
+    print(json.dumps(yaml.load(yfile.read()), indent=2))
 ```
 
-We get the following JSON:
+We get the following:
 
 ```
 {
