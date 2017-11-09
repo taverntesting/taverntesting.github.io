@@ -552,3 +552,17 @@ achieved by passing in a global configuration.
 Using the `tavern-ci` tool or pytest, this can be passed in at the command line
 using the `--tavern-global-cfg` flag. The file given will be loaded and used as
 before.
+
+## Matching arbitrary return values in a response
+
+Sometimes you want to just make sure that a value is returned, but you don't
+know (or care) what it is. This can be achieved by using `null` as the value to
+match in the **response** block:
+
+```yaml
+response:
+  body:
+    # Will assert that there is a 'returned_uuid' key, but will do no checking
+    # on the actual value of it
+    returned_uuid: null
+```
