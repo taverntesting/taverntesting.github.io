@@ -3,6 +3,9 @@
 If you haven't already, it's worth looking through the [examples](/examples)
 before diving into this.
 
+Note that Tavern **only** supports Python 3, and at the time of writing is only
+tested against Python 3.3-3.6.
+
 ## Contents
 
 - [Anatomy of a test](#anatomy-of-a-test)
