@@ -547,14 +547,121 @@ As long as includes.yaml is in the same folder as the tests, the variables will
 automatically be loaded and available for formatting as before. Multiple include
 files can be specified.
 
-### Including external files via the command line
+### Including global configuration files
 
 If you do want to run the same tests with a different input data, this can be
 achieved by passing in a global configuration.
 
-Using the `tavern-ci` tool or pytest, this can be passed in at the command line
-using the `--tavern-global-cfg` flag. The file given will be loaded and used as
-before.
+Using a global configuration file works the same as implicitly including a file
+in every test. For example, say we have a server that takes a user's name and
+address and returns some hash based on this information. We have two
+servers that need to do this correctly, so we need two tests that use the same
+input data but need to post to 2 different urls:
+
+```yaml
+# two_tests.tavern.yaml
+---
+test_name: Check server A responds properly
+
+includes:
+  - !include includesA.yaml
+
+stages:
+  - name: Check thing is processed correctly
+    request:
+      method: GET
+      url: "{host:s}/"
+      json: &input_data
+        name: "{name:s}"
+        house_number: "{house_number:d}"
+        street: "{street:s}"
+        town: "{town:s}"
+        postcode: "{postcode:s}"
+        country: "{country:s}"
+        planet: "{planet:s}"
+        galaxy: "{galaxy:s}"
+        universe: "{universe:s}"
+    response:
+      status_code: 200
+      body:
+        hashed: "{expected_hash:s}"
+
+---
+test_name: Check server B responds properly
+
+includes:
+  - !include includesB.yaml
+
+stages:
+  - name: Check thing is processed correctly
+    request:
+      method: GET
+      url: "{host:s}/"
+      json:
+        <<: *input_data
+    response:
+      status_code: 200
+      body:
+        hashed: "{expected_hash:s}"
+```
+
+Including the full set of input data in includesA.yaml and includesB.yaml would
+mean that a lot of the same input data would be repeated. To get around this, we
+can define a file called, for example, `common.yaml` which has all the input
+data except for `host` in it, and make sure that includesA/B only have the
+`host` variable in:
+
+```yaml
+# common.yaml
+---
+
+name: Common test information
+description: |
+  user location information for Joe Bloggs test user
+
+variables:
+  name: Joe bloggs
+  house_number: 123
+  street: Fake street
+  town: Chipping Sodbury
+  postcode: BS1 2BC
+  country: England
+  planet: Earth
+  galaxy: Milky Way
+  universe: A
+  expected_hash: aJdaAK4fX5Waztr8WtkLC5
+```
+
+```yaml
+# includesA.yaml
+---
+
+name: server A information
+description: server A specific information
+
+variables:
+  host: www.server-a.com
+```
+
+```yaml
+# includesB.yaml
+---
+
+name: server B information
+description: server B specific information
+
+variables:
+  host: www.server-B.io
+```
+
+If the behaviour of server A and server B ever diverge in future, information
+can be moved out of the common file and into the server specific include
+files.
+
+Using the `tavern-ci` tool or pytest, this global configuration can be passed in
+at the command line using the `--tavern-global-cfg` flag. The variables in
+`common.yaml` will then be available for formatting in *all* tests during that
+test run.
 
 ## Matching arbitrary return values in a response
 
