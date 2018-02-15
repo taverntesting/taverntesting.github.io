@@ -676,3 +676,63 @@ response:
     # on the actual value of it
     returned_uuid: null
 ```
+
+## Persistent cookies
+
+Tavern uses
+[requests](http://docs.python-requests.org/en/master/api/#requests.request)
+under the hood, and uses a persistent `Session` for each test. This means that
+cookies are propagated forward to further stages of a test. Cookies can also be
+required to pass a test. For example, say we have a server that returns a cookie
+which then needs to be used for future requests:
+
+```yaml
+---
+
+test_name: Make sure cookie is required to log in
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Try to check user info without login information
+    request:
+      url: "{host}/userinfo"
+      method: GET
+    response:
+      status_code: 401
+      body:
+        error: "no login information"
+      headers:
+        content-type: application/json
+
+  - name: login
+    request:
+      url: "{host}/login"
+      json:
+        user: test-user
+        password: correct-password
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      cookies:
+        - session-cookie
+      headers:
+        content-type: application/json
+
+  - name: Check user info
+    request:
+      url: "{host}/userinfo"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        name: test-user
+      headers:
+        content-type: application/json
+```
+
+This test ensures that a cookie called `session-cookie` is returned from the
+'login' stage, and this cookie will be sent with all future stages of that test.
