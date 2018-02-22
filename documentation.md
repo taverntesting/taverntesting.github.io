@@ -821,8 +821,9 @@ The MQTT library used is the
 the most part the arguments for each block are passed directly through to the
 similarly-named methods on the `paho.mqtt.client.Client` class.
 
-The full list of options for the `mqtt` client block are listed below (note that
-`host` is the only required key):
+The full list of options for the `mqtt` client block are listed below (`host`
+is the only required key, thought you will almost always require some of the
+others):
 
 - `client`: Passed through to `Client.__init__`.
   - `transport`: Connection type, optional. `websockets` or `tcp`. Defaults to
@@ -839,6 +840,7 @@ The full list of options for the `mqtt` client block are listed below (note that
     kicked off frequently.
   - `timeout`: How long to try and connect to the MQTT broker before giving up.
     This is not passed through to paho-mqtt, it is implemented in Tavern.
+    Defaults to 1 (second).
 - `tls`: Controls TLS connections - at the time of writing this only has one key
   that can be used to enable TLS.
   - `enable`: Enable TLS connection with broker. If enabled, Tavern essentially
@@ -854,3 +856,175 @@ Similar to the persistent `requests` session, the MQTT client is created at the
 beginning of a test and used for all stages in the test.
 
 ### MQTT publishing options
+
+Messages can be published using the MQTT broker with the `mqtt_publish` key. In
+the above example, a message is published on the topic `/device/123/ping`, with
+the payload `ping`.
+
+Like when making HTTP requests, JSON can be sent using the `json` key instead of
+the `payload` key.
+
+```yaml
+    mqtt_publish:
+      topic: /device/123/ping
+      json:
+        thing_1: abc
+        thing_2: 123
+```
+
+This will result in the MQTT payload `'{"thing_2": 123, "thing_1": "abc"}'`
+being sent.
+
+The full list of keys for this block:
+
+- `topic`: The MQTT topic to publish on
+- `payload` OR `json`: A plain text payload to publish, or a YAML object to
+  serialize into JSON.
+- `qos`: QoS level for publishing. Defaults to 0 in paho-mqtt.
+
+### Options for receiving MQTT messages
+
+The `mqtt_response` key gives a topic and payload which should be received by
+the end of the test stage, or that stage will be considered a failure. This
+works by subscribing to the topic specified before running the test, and then
+waiting after the test for a specified timeout for that message to be sent. If a
+message on the topic specified with **the same payload** is not received within
+that timeout period, it is considered a failure.
+
+If other messages on the same topic but with a different payload arrive in the
+meantime, they are ignored and a warning will be logged.
+
+The keys which can be used:
+
+- `topic`: The MQTT topic to subcribe to
+- `payload` OR `json`: A plain text payload or a YAML object that will be
+  serialized into JSON that must match the payload of a message published to
+  `topic`.
+- `timeout`: How long to wait for the message to arrive. Defaults to 3
+  (seconds).
+
+## Mixing MQTT tests and HTTP tests
+
+If the architecture of your program combines MQTT and HTTP, Tavern can
+seamlessly test either or both of them in the same test, and even in the same
+stage.
+
+### MQTT messages in separate stages
+
+In this example we have a server that listens for an MQTT message from a device
+for it to say that a light has been turned on. When it receives this message, it
+updates a database so that each future request to get the state of the device
+will return the updated state.
+
+```
+---
+
+test_name: Make sure posting publishes mqtt message
+
+includes:
+  - !include common.yaml
+
+# More realistic broker connection options
+mqtt: &mqtt_spec
+  client:
+    transport: websockets
+  connect:
+    host: an.mqtt.broker.com
+    port: 4687
+  tls:
+    enable: true
+  auth:
+    username: joebloggs
+    password: password123
+
+stages:
+  - name: step 1 - get device state with lights off
+    request:
+      url: "{host}/get_device_state"
+      params:
+        device_id: 123
+      method: GET
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      body:
+        lights: "off"
+      headers:
+        content-type: application/json
+
+  - name: step 2 - publish an mqtt message saying that the lights are now on
+    mqtt_publish:
+      topic: /device/123/lights
+      qos: 1
+      payload: "on"
+    delay_after: 2
+
+  - name: step 3 - get device state, lights now on
+    request:
+      url: "{host}/get_device_state"
+      params:
+        device_id: 123
+      method: GET
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      body:
+        lights: "on"
+      headers:
+        content-type: application/json
+```
+
+You can see from this example that when using `mqtt_publish` we don't
+necessarily need to expect a message to be published in return - We can just
+send a message and wait for it to be processed with `delay_after`.
+
+### MQTT message in the same stage
+
+MQTT blocks and HTTP blocks can be combined in the same test stage to test that
+sending a HTTP request results in an MQTT message being sent.
+
+Say we have a server that takes a device id and publishes an MQTT message to it
+saying hello:
+
+```
+---
+
+test_name: Make sure posting publishes mqtt message
+
+includes:
+  - !include common.yaml
+
+mqtt: *mqtt_spec
+
+stages:
+  - name: step 1 - post message trigger
+    request:
+      url: "{host}/send_mqtt_message"
+      json:
+        device_id: 123
+        payload: "hello"
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      body:
+        topic: "/device/123"
+      headers:
+        content-type: application/json
+    mqtt_response:
+      topic: /device/123
+      payload: "hello"
+      timeout: 5
+```
+
+Before running the `request` in this stage, Tavern will subscribe to
+`/device/123`. After making the request (and getting the correct response from
+the server!), it will wait 5 seconds for a message to be published on that
+topic.
+
+**Note**: You can only have one of `request` or `mqtt_publish` in a test stage.
+If you need to publish a message and send a HTTP request in sequence, use an
+approach like the previous example where they are in two separate stages.
