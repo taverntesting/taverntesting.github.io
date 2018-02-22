@@ -676,3 +676,104 @@ response:
     # on the actual value of it
     returned_uuid: null
 ```
+
+## Adding a delay between tests
+
+Sometimes you might need to wait for some kind of uncontrollable external event
+before moving on to the next stage of the test. To wait for a certain amount of time
+before or after a test, the `delay_before` and `delay_after` keys can be used.
+Say you have an asynchronous task running after sending a POST message with a
+user id - an example of using this behaviour:
+
+```yaml
+---
+test_name: Make sure asynchronous task updates database
+
+stages:
+  - name: Trigger task
+    request:
+      url: https://example.com/run_intensive_task_in_background
+      method: POST
+      json:
+        user_id: 123
+    # Server responds instantly...
+    response:
+      status_code: 200
+    # ...but the task takes ~3 seconds to complete
+    delay_after: 5
+
+  - name: Check task has triggered
+    request:
+      url: https://example.com/check_task_triggered
+      method: POST
+      json:
+        user_id: 123
+    response:
+      status_code: 200
+      body:
+        task: completed
+```
+
+Having `delay_before` in the second stage of the test is semantically identical
+to having `delay_after` in the first stage of the test - feel free to use
+whichever seems most appropriate.
+
+## Persistent cookies
+
+Tavern uses
+[requests](http://docs.python-requests.org/en/master/api/#requests.request)
+under the hood, and uses a persistent `Session` for each test. This means that
+cookies are propagated forward to further stages of a test. Cookies can also be
+required to pass a test. For example, say we have a server that returns a cookie
+which then needs to be used for future requests:
+
+```yaml
+---
+
+test_name: Make sure cookie is required to log in
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Try to check user info without login information
+    request:
+      url: "{host}/userinfo"
+      method: GET
+    response:
+      status_code: 401
+      body:
+        error: "no login information"
+      headers:
+        content-type: application/json
+
+  - name: login
+    request:
+      url: "{host}/login"
+      json:
+        user: test-user
+        password: correct-password
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      cookies:
+        - session-cookie
+      headers:
+        content-type: application/json
+
+  - name: Check user info
+    request:
+      url: "{host}/userinfo"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        name: test-user
+      headers:
+        content-type: application/json
+```
+
+This test ensures that a cookie called `session-cookie` is returned from the
+'login' stage, and this cookie will be sent with all future stages of that test.
