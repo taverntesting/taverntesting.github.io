@@ -777,3 +777,80 @@ stages:
 
 This test ensures that a cookie called `session-cookie` is returned from the
 'login' stage, and this cookie will be sent with all future stages of that test.
+
+## Testing with MQTT messages
+
+Since version `0.4.0` Tavern has supported tests that require sending and
+receiving MQTT messages.
+
+This is a very simple MQTT test that only uses MQTT messages:
+
+```yaml
+# test_mqtt.tavern.yaml
+---
+
+test_name: Test mqtt message response
+mqtt:
+  client:
+    transport: websockets
+    client_id: tavern-tester
+  connect:
+    host: localhost
+    port: 9001
+    timeout: 3
+
+stages:
+  - name: step 1 - ping/pong
+    mqtt_publish:
+      topic: /device/123/ping
+      payload: ping
+    mqtt_response:
+      topic: /device/123/pong
+      payload: pong
+      timeout: 5
+```
+
+The first thing to notice is the extra `mqtt` block required at the top level.
+When this block is present, an MQTT client will be started for the current test
+and is used to publish and receive messages from a broker.
+
+### MQTT connection options
+
+The MQTT library used is the
+[paho-mqtt](https://github.com/eclipse/paho.mqtt.python) Python library, and for
+the most part the arguments for each block are passed directly through to the
+similarly-named methods on the `paho.mqtt.client.Client` class.
+
+The full list of options for the `mqtt` client block are listed below (note that
+`host` is the only required key):
+
+- `client`: Passed through to `Client.__init__`.
+  - `transport`: Connection type, optional. `websockets` or `tcp`. Defaults to
+    `tcp`.
+  - `client_id`: MQTT client ID, optional. Defaults to `tavern-tester`.
+  - `clean_session`: Whether to connect with a clean session or not. `true` or
+    `false`. Defaults to `false`.
+- `connect`: Passed through to `Client.connect`.
+  - `host`: MQTT broker host.
+  - `port`: MQTT broker port. Defaults to 1883 in the paho-mqtt library.
+  - `keepalive`: Keepalive frequency to MQTT broker. Defaults to 60 (seconds) in
+    the paho-mqtt library. Note that some brokers will kick client off after 60
+    seconds by default (eg VerneMQ), so you might need to lower this if you are
+    kicked off frequently.
+  - `timeout`: How long to try and connect to the MQTT broker before giving up.
+    This is not passed through to paho-mqtt, it is implemented in Tavern.
+- `tls`: Controls TLS connections - at the time of writing this only has one key
+  that can be used to enable TLS.
+  - `enable`: Enable TLS connection with broker. If enabled, Tavern essentially
+    just calls `Client.tls_enable()`.
+- `auth`: Passed through to `Client.username_pw_set`.
+  - `username`: Username to connect to broker with.
+  - `password`: Password to use with username.
+
+The above example connects to an MQTT broker on port 9001 using the websockets
+protocol, and will try to connect for 3 seconds before failing the test.
+
+Similar to the persistent `requests` session, the MQTT client is created at the
+beginning of a test and used for all stages in the test.
+
+### MQTT publishing options
