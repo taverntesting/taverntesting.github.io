@@ -676,3 +676,44 @@ response:
     # on the actual value of it
     returned_uuid: null
 ```
+
+## Adding a delay between tests
+
+Sometimes you might need to wait for some kind of uncontrollable external event
+before moving on to the next stage of the test. To wait for a certain amount of time
+before or after a test, the `delay_before` and `delay_after` keys can be used.
+Say you have an asynchronous task running after sending a POST message with a
+user id - an example of using this behaviour:
+
+```yaml
+---
+test_name: Make sure asynchronous task updates database
+
+stages:
+  - name: Trigger task
+    request:
+      url: https://example.com/run_intensive_task_in_background
+      method: POST
+      json:
+        user_id: 123
+    # Server responds instantly...
+    response:
+      status_code: 200
+    # ...but the task takes ~3 seconds to complete
+    delay_after: 5
+
+  - name: Check task has triggered
+    request:
+      url: https://example.com/check_task_triggered
+      method: POST
+      json:
+        user_id: 123
+    response:
+      status_code: 200
+      body:
+        task: completed
+```
+
+Having `delay_before` in the second stage of the test is semantically identical
+to having `delay_after` in the first stage of the test - feel free to use
+whichever seems most appropriate.
