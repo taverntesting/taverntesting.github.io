@@ -1,6 +1,6 @@
-# Restful API testing
+# Easier API testing
 
-Tavern is a pytest plugin, command-line tool and Python 3 library for automated testing of RESTful APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests.
+Tavern is a pytest plugin, command-line tool and Python 3 library for automated testing of APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests. At the time of writing, Tavern supports testing RESTful APIs as well as MQTT based APIs.
 
 The best way to use Tavern is with [pytest](https://docs.pytest.org/en/latest/). Tavern comes with a pytest plugin so that literally all you have to do is install pytest and Tavern, write your tests in `.tavern.yaml` files and run pytest. This means you get access to all of the pytest ecosystem and allows you to do all sorts of things like regularly run your tests against a test server and report failures or generate HTML reports.
 
@@ -51,9 +51,9 @@ $ tavern-ci --stdout minimal_test.tavern.yaml
 
 ## Why not Postman, Insomnia or pyresttest etc?
 
-Tavern is a focused tool which does one thing well: automated testing of RESTful APIs.
+Tavern is a focused tool which does one thing well: automated testing of APIs.
 
-**Postman** and **Insomnia** are excellent tools which cover a wide range of use-cases, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, Tavern has several advantages over Postman:
+**Postman** and **Insomnia** are excellent tools which cover a wide range of use-cases for RESTful APIs, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, Tavern has several advantages over Postman:
 - A full-featured Python environment for writing custom validation functions
 - Seamless integration with pytest to keep all your tests in one place
 - A simpler, less verbose and clearer testing language
@@ -66,6 +66,8 @@ Tavern does not do many of the things Postman and Insomnia do. For example, Tave
 - Validation function are more flexible and easier to use
 - Better explanations of why a test failed
 
+With the release of version `0.4.0`, Tavern now also supports testing MQTT messages alongside RESTful APIs, a feature missing from the previously discussed tools.
+
 ## Acknowledgements
 
 Tavern makes use of several excellent open-source projects:
@@ -76,6 +78,7 @@ Tavern makes use of several excellent open-source projects:
 - [pykwalify](https://github.com/Grokzen/pykwalify), for YAML schema validation
 - [pyjwt](https://github.com/jpadilla/pyjwt), for decoding JSON Web Tokens
 - [colorlog](https://github.com/borntyping/python-colorlog), for formatting terminal outputs
+- [paho-mqtt](https://github.com/eclipse/paho.mqtt.python), for sending MQTT messages
 
 
 ## Developed and maintained by [Overlock](https://overlock.io)
