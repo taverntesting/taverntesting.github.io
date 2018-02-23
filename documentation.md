@@ -499,6 +499,73 @@ stages:
         has_premium: true
 ```
 
+## Magic format variables
+
+Since `0.5.0`, Tavern also has some 'magic' variables available in the `tavern`
+key for formatting.
+
+### Request variables
+
+This currently includes all request variables and is available under the
+`request_vars` key. Say we want to test a server that updates a user's profile
+and returns the change:
+
+```
+---
+test_name: Check server responds with updated data
+
+stages:
+  - name: Send message, expect it to be echoed back
+    request:
+      method: POST
+      url: "www.example.com/user"
+      json:
+        welcome_message: "hello"
+      params:
+        user_id: abc123
+    response:
+      status_code: 200
+      body:
+        user_id: "{tavern.request_vars.params.user_id}"
+        new_welcome_message: "{tavern.request_vars.json.message}"
+```
+
+This example uses `json` and `params` - we can also use any of the other request
+parameters like `method`, `url`, etc.
+
+### Environment variables
+
+Environment variables are also available under the `env_vars` key. If a server
+being tested against requires a password, bearer token, or some other form of
+authorisation that you don't want to ship alongside the test code, it can be
+accessed via this key (for example, in CI).
+
+```
+---
+test_name: Test getting user information requires auth
+
+stages:
+  - name: Get information without auth fails
+    request:
+      method: GET
+      url: "www.example.com/get_info"
+    response:
+      status_code: 401
+      body:
+        error: "No authorization"
+
+  - name: Get information with admin token
+    request:
+      method: GET
+      url: "www.example.com/get_info"
+      headers:
+        Authorization: "Basic {tavern.env_var.SECRET_CI_COMMIT_AUTH}"
+    response:
+      status_code: 200
+      body:
+        name: "Joe Bloggs"
+```
+
 ## Including external files
 
 Even with being able to use anchors within the same file, there is often some
