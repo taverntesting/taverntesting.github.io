@@ -677,6 +677,13 @@ response:
     returned_uuid: null
 ```
 
+## Running against an unverified server
+
+If you're testing against a server which has SSL certificates that fail
+validation (for example, testing against a local development server with
+self-signed certificates), the `verify` keyword can be used in the `request`
+stage to disable certificate checking for that request.
+
 ## Adding a delay between tests
 
 Sometimes you might need to wait for some kind of uncontrollable external event
