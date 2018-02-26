@@ -68,6 +68,12 @@ Tavern does not do many of the things Postman and Insomnia do. For example, Tave
 
 With the release of version `0.4.0`, Tavern now also supports testing MQTT messages alongside RESTful APIs, a feature missing from the previously discussed tools.
 
+## Hacking on Tavern
+
+If you want to add a feature to Tavern or just play around with it locally, it's a good plan to first create a local development environment ([this page](http://docs.python-guide.org/en/latest/dev/virtualenvs/) has a good primer for working with development environments with Python). After you've created your development environment, just `pip install tox` and run `tox` to run the unit tests. If you want to run the integration tests, make sure you have [docker](https://www.docker.com/) installed and run `tox -c tox-integraton.ini`. It's that simple!
+
+If you want to add a feature to get merged back into mainline Tavern, then simply add the feature and some tests (probably just unit tests - adding integration tests is a bit more involved as it requires implementing the behaviour you're testing) and open a [pull request](https://github.com/taverntesting/tavern/pulls). Note that Tavern supports Python 2.7 (for the time being), so any code you add has to be compatible with it. We currently use the [future](https://pypi.python.org/pypi/future) library to provide backwards compatibility.
+
 ## Acknowledgements
 
 Tavern makes use of several excellent open-source projects:
