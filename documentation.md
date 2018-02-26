@@ -896,7 +896,7 @@ the most part the arguments for each block are passed directly through to the
 similarly-named methods on the `paho.mqtt.client.Client` class.
 
 The full list of options for the `mqtt` client block are listed below (`host`
-is the only required key, thought you will almost always require some of the
+is the only required key, though you will almost always require some of the
 others):
 
 - `client`: Passed through to `Client.__init__`.
@@ -912,12 +912,11 @@ others):
     the paho-mqtt library. Note that some brokers will kick client off after 60
     seconds by default (eg VerneMQ), so you might need to lower this if you are
     kicked off frequently.
-  - `timeout`: How long to try and connect to the MQTT broker before giving up.
+  - `timeout`: How many seconds to try and connect to the MQTT broker before giving up.
     This is not passed through to paho-mqtt, it is implemented in Tavern.
-    Defaults to 1 (second).
-- `tls`: Controls TLS connections - at the time of writing this only has one key
-  that can be used to enable TLS.
-  - `enable`: Enable TLS connection with broker. If enabled, Tavern essentially
+    Defaults to 1.
+- `tls`: Controls TLS connection - in future this will support .
+  - `enable`: Enable TLS connection with broker. If enabled, Tavern currently
     just calls `Client.tls_enable()`.
 - `auth`: Passed through to `Client.username_pw_set`.
   - `username`: Username to connect to broker with.
@@ -974,8 +973,7 @@ The keys which can be used:
 - `payload` OR `json`: A plain text payload or a YAML object that will be
   serialized into JSON that must match the payload of a message published to
   `topic`.
-- `timeout`: How long to wait for the message to arrive. Defaults to 3
-  (seconds).
+- `timeout`: How many seconds to wait for the message to arrive. Defaults to 3.
 
 ## Mixing MQTT tests and HTTP tests
 
