@@ -61,7 +61,7 @@ Tavern is a focused tool which does one thing well: automated testing of APIs.
 
 Tavern does not do many of the things Postman and Insomnia do. For example, Tavern does not have a GUI nor does it do API monitoring or mock servers. On the other hand, Tavern is free and open-source and is a more powerful tool for developers to automate tests.
 
-**pyresttest** is a similar to Tavern for testing RESTful APIs, but is no longer actively developed. On top of MQTT testing, Tavern has several other advantages over PyRestTest which overall add up to a better developer experience:
+**pyresttest** is a similar tool to Tavern for testing RESTful APIs, but is no longer actively developed. On top of MQTT testing, Tavern has several other advantages over PyRestTest which overall add up to a better developer experience:
 
 - Cleaner test syntax which is more intuitive, especially for non-developers
 - Validation function are more flexible and easier to use
