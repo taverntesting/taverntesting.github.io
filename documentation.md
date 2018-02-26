@@ -915,9 +915,20 @@ others):
   - `timeout`: How many seconds to try and connect to the MQTT broker before giving up.
     This is not passed through to paho-mqtt, it is implemented in Tavern.
     Defaults to 1.
-- `tls`: Controls TLS connection - in future this will support .
-  - `enable`: Enable TLS connection with broker. If enabled, Tavern currently
-    just calls `Client.tls_enable()`.
+- `tls`: Controls TLS connection - as well as `enable`, this accepts all
+  keywords taken by `Client.tls_set()` (see
+  [paho documentation](https://github.com/eclipse/paho.mqtt.python/blob/e9914a759f9f5b8081d59fd65edfd18d229a399e/src/paho/mqtt/client.py#L636-L671)
+  for the meaning of these keywords).
+  - `enable`: Enable TLS connection with broker. If no other `tls` options are
+    passed, using `enable: true` will enable tls without any custom
+    certificates/keys/ciphers. If `enable: false` is used, any other tls options
+    will be ignored.
+  - `ca_certs`
+  - `certfile`
+  - `keyfile`
+  - `cert_reqs`
+  - `tls_version`
+  - `ciphers`
 - `auth`: Passed through to `Client.username_pw_set`.
   - `username`: Username to connect to broker with.
   - `password`: Password to use with username.
