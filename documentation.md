@@ -559,7 +559,7 @@ stages:
       method: GET
       url: "www.example.com/get_info"
       headers:
-        Authorization: "Basic {tavern.env_var.SECRET_CI_COMMIT_AUTH}"
+        Authorization: "Basic {tavern.env_vars.SECRET_CI_COMMIT_AUTH}"
     response:
       status_code: 200
       body:
