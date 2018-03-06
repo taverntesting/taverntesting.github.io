@@ -14,7 +14,7 @@ tested against Python 2.7/3.3-3.6.
 - [Calling external functions](#calling-external-functions)
     - [Built-in validators](#built-in-validators)
     - [Saving data with external functions](#saving-data-with-external-functions)
-- [Anchors between documents](#anchors-between-documents)
+- [Anchors between documents](#reusing-requests-and-yaml-fragments)
 - [Including external files](#including-external-files)
     - [Including external files via the command line](#including-external-files-via-the-command-line)
 
@@ -297,7 +297,7 @@ Ideas for other helper functions which might be useful:
 - Validate templated HTML returned from an endpoint using an XML parser
 - etc.
 
-## Resuing requests and YAML fragments
+## Reusing requests and YAML fragments
 
 A lot of tests will require using the same step multiple times, such as logging
 in to a server before running tests or simply running the same request twice in
