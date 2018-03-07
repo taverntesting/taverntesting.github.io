@@ -733,10 +733,11 @@ test run.
 **NOTE**: `tavern-ci` uses argparse to read this from the command line:
 
 ```
-# This will work
+# These will all work
 $ tavern-ci --tavern-global-cfg=integration_tests/local_urls.yaml
-# So will this
 $ tavern-ci --tavern-global-cfg integration_tests/local_urls.yaml
+$ py.test --tavern-global-cfg=integration_tests/local_urls.yaml
+$ py.test --tavern-global-cfg integration_tests/local_urls.yaml
 ```
 
 It might be tempting to put this in the 'addopts' section of the pytest.ini file
