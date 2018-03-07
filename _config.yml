@@ -2,3 +2,4 @@ theme: jekyll-theme-cayman
 title: Tavern
 description: Automated RESTful API testing
 google_analytics: UA-115009026-1
+markdown: kramdown
