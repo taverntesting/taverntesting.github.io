@@ -755,6 +755,37 @@ addopts =
     # --tavern-global-cfg integration_tests/local_urls.yaml
 ```
 
+Instead, use the `tavern-global-cfg` option in your pytest.ini file:
+
+```ini
+[pytest]
+tavern-global-cfg=
+    integration_tests/local_urls.yaml
+```
+
+### Multiple global configuration files
+
+Sometimes you will want to have 2 (or more) different global configuration
+files, one containing common information such as paths to different resources
+and another containing information specific to the environment that is being
+tested. Multiple global configuration files can be specified either on the
+command line or in pytest.ini to avoid having to put an `!include` directive in
+every test:
+
+```
+# Note the '--' after all global configuration files are passed, indicating that
+# arguments after this are not global config files
+$ tavern-ci --tavern-global-cfg common.yaml test_urls.yaml -- test_server.tavern.yaml
+$ py.test --tavern-global-cfg common.yaml local_docker_urls.yaml -- test_server.tavern.yaml
+```
+```ini
+# pytest.ini
+[pytest]
+tavern-global-cfg=
+    common.yaml
+    test_urls.yaml
+```
+
 ## Matching arbitrary return values in a response
 
 Sometimes you want to just make sure that a value is returned, but you don't
