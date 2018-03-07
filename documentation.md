@@ -7,6 +7,7 @@ Note that Tavern **only** supports Python 2.7 and up, and at the time of writing
 tested against Python 2.7/3.3-3.6.
 
 ## Contents
+{:.no_toc}
 
 {:toc}
 
