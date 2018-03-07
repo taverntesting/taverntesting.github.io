@@ -8,15 +8,7 @@ tested against Python 2.7/3.3-3.6.
 
 ## Contents
 
-- [Anatomy of a test](#anatomy-of-a-test)
-    - [Request](#request)
-    - [Response](#response)
-- [Calling external functions](#calling-external-functions)
-    - [Built-in validators](#built-in-validators)
-    - [Saving data with external functions](#saving-data-with-external-functions)
-- [Anchors between documents](#reusing-requests-and-yaml-fragments)
-- [Including external files](#including-external-files)
-    - [Including external files via the command line](#including-external-files-via-the-command-line)
+{:toc}
 
 ## Anatomy of a test
 
