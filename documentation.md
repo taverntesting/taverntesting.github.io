@@ -730,6 +730,30 @@ at the command line using the `--tavern-global-cfg` flag. The variables in
 `common.yaml` will then be available for formatting in *all* tests during that
 test run.
 
+**NOTE**: `tavern-ci` uses argparse to read this from the command line:
+
+```
+# This will work
+$ tavern-ci --tavern-global-cfg=integration_tests/local_urls.yaml
+# So will this
+$ tavern-ci --tavern-global-cfg integration_tests/local_urls.yaml
+```
+
+It might be tempting to put this in the 'addopts' section of the pytest.ini file
+to always pass a global configuration when using pytest, but be careful when
+doing this - due to what appears to be a bug in the pytest option parsing, this
+might not work as expected:
+
+```ini
+# pytest.ini
+[pytest]
+addopts =
+    # This will work
+    --tavern-global-cfg=integration_tests/local_urls.yaml
+    # This will not!
+    # --tavern-global-cfg integration_tests/local_urls.yaml
+```
+
 ## Matching arbitrary return values in a response
 
 Sometimes you want to just make sure that a value is returned, but you don't
