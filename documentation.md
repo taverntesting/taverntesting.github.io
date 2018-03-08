@@ -1,4 +1,5 @@
 # Documentation
+{:.no_toc}
 
 If you haven't already, it's worth looking through the [examples](/examples)
 before diving into this.
@@ -9,6 +10,7 @@ tested against Python 2.7/3.3-3.6.
 ## Contents
 {:.no_toc}
 
+* TOC will be rendered here
 {:toc}
 
 ## Anatomy of a test
