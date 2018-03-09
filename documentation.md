@@ -939,16 +939,25 @@ tavern-global-cfg=
 ## Matching arbitrary return values in a response
 
 Sometimes you want to just make sure that a value is returned, but you don't
-know (or care) what it is. This can be achieved by using `null` as the value to
-match in the **response** block:
+know (or care) what it is. This can be achieved by using `!anything` as the
+value to match in the **response** block:
 
 ```yaml
 response:
   body:
     # Will assert that there is a 'returned_uuid' key, but will do no checking
     # on the actual value of it
-    returned_uuid: null
+    returned_uuid: !anything
 ```
+
+Using the magic `!anything` value should only ever be used inside pre-defined
+blocks in the response block (for example, `headers`, `params`, and `body` for a
+HTTP response).
+
+**NOTE**: Up until version 0.7.0 this was done by setting the value as `null`.
+This creates issues if you want to ensure that your server is actually returning
+a null value. Using `null` is still supported in the current version of Tavern,
+but will be removed in a future release, and should raise a warning.
 
 ## Running against an unverified server
 
