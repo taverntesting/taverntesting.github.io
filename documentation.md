@@ -390,10 +390,11 @@ stages:
 
 ### Custom auth header
 
-If you're using something like a JWT to authorise against your test server,
-specify a custom `Authorization` header (note that if you are using the JWT, you can
-use the built in `validate_jwt` external function as defined above to check that
-the claims are what you'd expect).
+If you're using a form of authorisation not covered by the above two examples to
+authorise against your test server (for example, a JWT-based system), specify a
+custom `Authorization` header. If you are using a JWT, you can use the built in
+`validate_jwt` external function as defined above to check that the claims are
+what you'd expect.
 
 ```yaml
 ---
