@@ -296,6 +296,155 @@ Ideas for other helper functions which might be useful:
 
 # Test definitions
 
+## Authorisation
+
+### Persistent cookies
+
+Tavern uses
+[requests](http://docs.python-requests.org/en/master/api/#requests.request)
+under the hood, and uses a persistent `Session` for each test. This means that
+cookies are propagated forward to further stages of a test. Cookies can also be
+required to pass a test. For example, say we have a server that returns a cookie
+which then needs to be used for future requests:
+
+```yaml
+---
+
+test_name: Make sure cookie is required to log in
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Try to check user info without login information
+    request:
+      url: "{host}/userinfo"
+      method: GET
+    response:
+      status_code: 401
+      body:
+        error: "no login information"
+      headers:
+        content-type: application/json
+
+  - name: login
+    request:
+      url: "{host}/login"
+      json:
+        user: test-user
+        password: correct-password
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      cookies:
+        - session-cookie
+      headers:
+        content-type: application/json
+
+  - name: Check user info
+    request:
+      url: "{host}/userinfo"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        name: test-user
+      headers:
+        content-type: application/json
+```
+
+This test ensures that a cookie called `session-cookie` is returned from the
+'login' stage, and this cookie will be sent with all future stages of that test.
+
+### HTTP Basic Auth
+
+For a server that expects HTTP Basic Auth, the `auth` keyword can be used in the
+request block. This expects a list of two items - the first item is the user
+name, and the second name is the password:
+
+```yaml
+---
+
+test_name: Check we can access API with HTTP basic auth
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Get user info
+    request:
+      url: "{host}/userinfo"
+      method: GET
+      auth:
+        - user@api.com
+        - password123
+    response:
+      status_code: 200
+      body:
+        user_id: 123
+      headers:
+        content-type: application/json
+```
+
+### Custom auth header
+
+If you're using something like a JWT to authorise against your test server,
+specify a custom `Authorization` header (note that if you are using the JWT, you can
+use the built in `validate_jwt` external function as defined above to check that
+the claims are what you'd expect).
+
+```yaml
+---
+
+test_name: Check we can login then use a JWT to access the API
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: login
+    request:
+      url: "{host}/login"
+      json:
+        user: test-user
+        password: correct-password
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      body:
+        $ext: &verify_token
+          function: tavern.testutils.helpers:validate_jwt
+          extra_kwargs:
+            jwt_key: "token"
+            key: CGQgaG7GYvTcpaQZqosLy4
+            options:
+              verify_signature: true
+              verify_aud: true
+              verify_exp: true
+            audience: testserver
+      headers:
+        content-type: application/json
+      save:
+        body:
+          test_login_token: token
+
+  - name: Get user info
+    request:
+      url: "{host}/userinfo"
+      method: GET
+      Authorization: "Bearer {test_login_token:s}"
+    response:
+      status_code: 200
+      body:
+        user_id: 123
+      headers:
+        content-type: application/json
+```
+
 ## Magic format variables
 
 Since `0.5.0`, Tavern also has some 'magic' variables available in the `tavern`
@@ -520,7 +669,7 @@ stages:
       url: http://test.server.com/locations
       method: GET
       headers:
-        Authorization: "{test_user_login_token}"
+        Authorization: "Bearer {test_user_login_token}"
     response:
       status_code: 200
       body:
@@ -540,7 +689,7 @@ stages:
       url: http://test.server.com/user_info
       method: GET
       headers:
-        Authorization: "{test_user_login_token}"
+        Authorization: "Bearer {test_user_login_token}"
     response:
       status_code: 200
       body:
@@ -551,7 +700,7 @@ stages:
       url: http://test.server.com/premium
       method: POST
       headers:
-        Authorization: "{test_user_login_token}"
+        Authorization: "Bearer {test_user_login_token}"
     response:
       status_code: 200
 
@@ -847,66 +996,6 @@ stages:
 Having `delay_before` in the second stage of the test is semantically identical
 to having `delay_after` in the first stage of the test - feel free to use
 whichever seems most appropriate.
-
-## Persistent cookies
-
-Tavern uses
-[requests](http://docs.python-requests.org/en/master/api/#requests.request)
-under the hood, and uses a persistent `Session` for each test. This means that
-cookies are propagated forward to further stages of a test. Cookies can also be
-required to pass a test. For example, say we have a server that returns a cookie
-which then needs to be used for future requests:
-
-```yaml
----
-
-test_name: Make sure cookie is required to log in
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: Try to check user info without login information
-    request:
-      url: "{host}/userinfo"
-      method: GET
-    response:
-      status_code: 401
-      body:
-        error: "no login information"
-      headers:
-        content-type: application/json
-
-  - name: login
-    request:
-      url: "{host}/login"
-      json:
-        user: test-user
-        password: correct-password
-      method: POST
-      headers:
-        content-type: application/json
-    response:
-      status_code: 200
-      cookies:
-        - session-cookie
-      headers:
-        content-type: application/json
-
-  - name: Check user info
-    request:
-      url: "{host}/userinfo"
-      method: GET
-    response:
-      status_code: 200
-      body:
-        name: test-user
-      headers:
-        content-type: application/json
-```
-
-This test ensures that a cookie called `session-cookie` is returned from the
-'login' stage, and this cookie will be sent with all future stages of that test.
 
 # MQTT integration testing
 
