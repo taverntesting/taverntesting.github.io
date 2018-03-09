@@ -959,6 +959,31 @@ This creates issues if you want to ensure that your server is actually returning
 a null value. Using `null` is still supported in the current version of Tavern,
 but will be removed in a future release, and should raise a warning.
 
+## Type conversions
+
+[YAML](http://yaml.org/spec/1.1/current.html#id867381) has some magic variables
+that you can use to coerce variables to certain types. For example, if we want
+to write an integer but make sure it gets converted to a string when it's
+actually sent to the server we can do something like this:
+
+```yaml
+request:
+  json:
+    an_integer: !!str 1234567890
+```
+
+However, due to the way YAML is loaded this doesn't work when you are using a
+formatted value. Because of this, Tavern provides similar special constructors
+that begin with a *single* exclamation mark that will work with formatted
+values. Say we want to convert a value from an included file to an integer:
+
+```yaml
+request:
+  json:
+    an_integer: !!int "{my_integer:d}" # Error
+    an_integer: !int "{my_integer:d}" # Works
+```
+
 ## Running against an unverified server
 
 If you're testing against a server which has SSL certificates that fail
