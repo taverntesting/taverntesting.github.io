@@ -53,7 +53,7 @@ test_minimal.tavern.yaml::Get some fake data from the JSON placeholder API PASSE
 ================================ 1 passed in 0.14 seconds =================================
 ```
 
-It is strongly advised that you use Tavern with Pytest - not only does it have a lot of utility to control discovery and execution of tests, there are a huge amount of plugins to improve your development experience. If you absolutely can't use Pytest for some reason, there is also a `tavern-ci` command line interface:
+It is strongly advised that you use Tavern with Pytest - not only does it have a lot of utility to control discovery and execution of tests, there are a huge amount of plugins to improve your development experience. If you absolutely can't use Pytest for some reason, use the `tavern-ci` command line interface:
 
 ```bash
 $ pip install tavern
