@@ -6,7 +6,7 @@ The best way to use Tavern is with [pytest](https://docs.pytest.org/en/latest/).
 
 You can also integrate Tavern into your own test framework or continuous integration setup using the Python library, or use the command line tool, `tavern-ci` with bash scripts and cron jobs.
 
-To learn more, check out the [examples](/example) or the complete [documentation](/documentation). If you're interested in contributing to the project take a look at the [GitHub repo](https://github.com/taverntesting/tavern).
+To learn more, check out the [examples](https://taverntesting.github.io/examples) or the complete [documentation](https://taverntesting.github.io/documentation). If you're interested in contributing to the project take a look at the [GitHub repo](https://github.com/taverntesting/tavern).
 
 ## Quickstart
 
