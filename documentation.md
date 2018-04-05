@@ -947,7 +947,17 @@ response:
   body:
     # Will assert that there is a 'returned_uuid' key, but will do no checking
     # on the actual value of it
-    returned_uuid: !anything
+    returned_block: !anything
+```
+
+This would match both of these response bodies:
+
+```yaml
+returned_block: hello
+```
+```yaml
+returned_block:
+  nested: value
 ```
 
 Using the magic `!anything` value should only ever be used inside pre-defined
@@ -958,6 +968,15 @@ HTTP response).
 This creates issues if you want to ensure that your server is actually returning
 a null value. Using `null` is still supported in the current version of Tavern,
 but will be removed in a future release, and should raise a warning.
+
+### Matching arbitrary specific types in a response
+
+If you want to make sure that the key returned is of a specific type, you can
+use one of the following markers instead:
+
+- `!anyint`: Matches any integer
+- `!anyfloat`: Matches any float (note that this will NOT match integers!)
+- `!anystr`: Matches any string
 
 ## Type conversions
 
