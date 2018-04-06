@@ -113,6 +113,6 @@ Tavern makes use of several excellent open-source projects:
 - [paho-mqtt](https://github.com/eclipse/paho.mqtt.python), for sending MQTT messages
 
 
-## Developed and maintained by [Overlock](https://overlock.io)
+## Developed and maintained by [Zoetrope Labs](https://zoetrope.io)
 
-Overlock helps developers quickly find and fix bugs in distributed systems such as IoT deployments by gathering together exception information from end devices, gateways or servers. We're currently in beta - find out more at [overlock.io](https://overlock.io)
+At Zoetrope Labs we work with our clients to develop fantastic connected products. We're based in Bristol, UK, and we work with companies large and small to get industry leading hardware & software solutions to market.
