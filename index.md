@@ -1,4 +1,9 @@
+
+
 # Easier API testing
+
+[![Travis CI](https://travis-ci.org/taverntesting/tavern.svg?branch=master)](https://travis-ci.org/taverntesting/tavern) [![PyPi](https://img.shields.io/pypi/v/tavern.svg)](https://pypi.org/project/tavern/) [![Gitter chat](https://badges.gitter.im/taverntesting.png)](https://gitter.im/taverntesting)
+
 
 Tavern is a pytest plugin, command-line tool and Python library for automated testing of APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests. Tavern supports testing RESTful APIs as well as MQTT based APIs.
 
@@ -7,6 +12,7 @@ The best way to use Tavern is with [pytest](https://docs.pytest.org/en/latest/).
 You can also integrate Tavern into your own test framework or continuous integration setup using the Python library, or use the command line tool, `tavern-ci` with bash scripts and cron jobs.
 
 To learn more, check out the [examples](https://taverntesting.github.io/examples) or the complete [documentation](https://taverntesting.github.io/documentation). If you're interested in contributing to the project take a look at the [GitHub repo](https://github.com/taverntesting/tavern).
+
 
 ## Quickstart
 
@@ -86,6 +92,13 @@ Tavern does not do many of the things Postman and Insomnia do. For example, Tave
 - Cleaner test syntax which is more intuitive, especially for non-developers
 - Validation function are more flexible and easier to use
 - Better explanations of why a test failed
+
+## Questions and community
+
+If you have any feature requests or if you've found a bug you can raise an [issue on GitHub](https://github.com/taverntesting/tavern/issues).
+
+We also have a [Gitter chat](https://gitter.im/taverntesting) for questions and general conversation about the use and development of Tavern.
+
 
 ## Hacking on Tavern
 
