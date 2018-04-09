@@ -100,6 +100,16 @@ If you want to add a feature to get merged back into mainline Tavern:
 
 Note that Tavern supports Python 2.7 (for the time being), so any code you add has to be compatible with it. We currently use the [future](https://pypi.python.org/pypi/future) library to provide backwards compatibility.
 
+## Consulting and feature requests
+
+As Tavern is an open source project, if you have a feature request or particular needs can be addressed in one of three ways.
+
+First, if the feature is likely to be useful to a substantial portion of Tavern developers then Zoetrope Labs, the maintainers of Tavern, are likely to be able to add the feature.
+
+Secondly, if you need a feature and have the ability to do so, you can contribute to the development of Tavern by implementing that feature and opening a pull request.
+
+Finally, if you have a specific feature request or need a plugin built that you would either like to remain closed-source or that addresses a very partiular use-case that would not be useful to the majority of Tavern users, then get in touch about consulting services. The revenue from these requests will be used to fund further open-source Tavern development.
+
 ## Acknowledgements
 
 Tavern makes use of several excellent open-source projects:
