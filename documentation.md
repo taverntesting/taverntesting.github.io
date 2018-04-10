@@ -1051,6 +1051,37 @@ Having `delay_before` in the second stage of the test is semantically identical
 to having `delay_after` in the first stage of the test - feel free to use
 whichever seems most appropriate.
 
+## Uploading files as part of the request
+
+To upload a file along with the request, the `files` key can be used:
+
+```yaml
+---
+
+test_name: Test files can be uploaded with tavern
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Upload multiple files
+    request:
+      url: "{host}/fake_upload_file"
+      method: POST
+      files:
+        test_files: "test_files.tavern.yaml"
+        common: "common.yaml"
+    response:
+      status_code: 200
+```
+
+This expects a mapping of the 'name' of the file in the request to the path on
+your computer.
+
+By default, the sending of files is handled by the Requests library - to see the
+implementation details, see their
+[documentation](http://docs.python-requests.org/en/master/user/quickstart/#post-a-multipart-encoded-file).
+
 # MQTT integration testing
 
 ## Testing with MQTT messages
