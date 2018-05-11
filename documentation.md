@@ -241,7 +241,7 @@ save:
     test_user_id: user.id
 ```
 
-In this case, both `{test_user_name}` and `{test_uer_id}` are available for use
+In this case, both `{test_user_name}` and `{test_user_id}` are available for use
 in later requests.
 
 For a more practical example, the built in `validate_jwt` function also returns the
