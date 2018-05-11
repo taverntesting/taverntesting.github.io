@@ -294,6 +294,12 @@ Ideas for other helper functions which might be useful:
 - Validate templated HTML returned from an endpoint using an XML parser
 - etc.
 
+One thing to bear in mind is that data can only be saved for use within the same
+test - each YAML document is considered to be a separate test (not counting
+anchors as described below). If you need to use the data in multiple tests, you
+will either need to put it into another file which you then include, or perform
+the same request in each test to re-fetch the data.
+
 # Test definitions
 
 ## Authorisation
