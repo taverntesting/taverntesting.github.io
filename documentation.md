@@ -983,6 +983,7 @@ use one of the following markers instead:
 - `!anyint`: Matches any integer
 - `!anyfloat`: Matches any float (note that this will NOT match integers!)
 - `!anystr`: Matches any string
+- `!anybool`: Matches any boolean (this will NOT match `null`)
 
 ## Type conversions
 
