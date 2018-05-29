@@ -120,6 +120,19 @@ Tavern knows which request keyword (eg `request`, `mqtt_publish`) corresponds to
 your plugin by matching it to the plugin's `request_block_name`. For the moment,
 this should be hardcoded to `request` for HTTP tests.
 
+Examples:
+
+- The base
+  [requests](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/request.py)
+  request object formats the keys and does some extra verification, such as
+  logging a warning if a user tries to send a body with a `GET` request
+- The
+  [paho-mqtt](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/mqtt/request.py)
+  request formats the input data and just makes sure that a user is not trying
+  to send two kinds of payloads at a time.
+- [tavern-flask](https://github.com/taverntesting/tavern-flask/blob/master/tavern_flask/request.py)
+  reuses functionality from Tavern to format the keys and do extra verification.
+
 ### Getting the expected response
 
 `get_expected_from_request` should be a function that takes 3 arguments:
@@ -136,6 +149,19 @@ perform any extra things that need doing based on the request or expected
 response. This will normally just be formatting the response block based on the
 variables in the test block config, but you may need to do extra things (such as
 subscribing to an MQTT topic).
+
+Examples:
+
+- The
+  [default](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/tavernhook.py)
+  behaviour is just to make sure that a correct response block is present and
+  format the input data.
+- An
+  [MQTT](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/mqtt/tavernhook.py)
+  test requires that the client also checks to see if a response is expected and
+  subscribes to the topic in question.
+- [tavern-flask](https://github.com/taverntesting/tavern-flask/blob/master/tavern_flask/tavernhook.py)
+  behaves identically to the base Tavern behaviour.
 
 ### Response
 
@@ -163,3 +189,23 @@ It should also define a couple of methods:
 - `__str__` should return a human-readable string describing the response. This
   is mainly for debugging, and should only give as much information as you think
   is required. For example, a HTTP response might be printed as (
+
+Like with a request, Tavern knows which verifier to use by looking at the
+`response_block_name` key.
+
+Examples:
+
+- The [base
+  requests verifier](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/response.py)
+  Checks a variety of things like the expected headers, expected redirect
+  locations, cookies, etc.
+- The
+  [paho-mqtt](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/mqtt/response.py)
+  plugin needs to wait for the specified timeout to see if a message was
+  received on a given topic. Note that there does not need to be a response for
+  an MQTT request - a stage might consist of just an `mqtt_publish` block with
+  no expected response.
+- [tavern-flask](https://github.com/taverntesting/tavern-flask/blob/master/tavern_flask/response.py)
+  just reuses functionality from the base verifier again. Because the flask
+  `Response` object is slightly different from the requests one, some conversion
+  has to be done on the data.
