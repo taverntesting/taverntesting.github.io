@@ -215,9 +215,15 @@ It should also define a couple of methods:
 
 - `verify` takes one argument, which is the return value from the `run` method
   on your request class. It should read whatever information is relevant from
-  this response object and verify that it is as expected. There are some
-  utilities on `BaseResponse` to help with this, including printing errors and
-  checking return values. The easiest way to 
+  this response object and verify that it is as expected, then return any values
+  from the response which should be saved into the test block config. A plugin
+  does not need to save anything - just return an empty dictionary if you don't
+  want to save anything. There are some utilities on `BaseResponse` to help with
+  this, including printing errors and checking return values. This should raise
+  a `tavern.exceptions.TestFailError` if verification fails. The easiest way to
+  verify the response is to call `self._adderr` with a string to a list called
+  `self.errors` for every error encountered. If there is anything in this
+  dictionary at the end of `verify`, raise an exception.
 
 - `__str__` should return a human-readable string describing the response. This
   is mainly for debugging, and should only give as much information as you think
