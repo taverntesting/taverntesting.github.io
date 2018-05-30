@@ -49,12 +49,10 @@ tavern_mqtt =
 
 Examples:
 
-- The [requests
-  based](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/tavernhook.py)
+- The [requests based](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/tavernhook.py)
   http entry point points to a class using the `module.submodule:member` entry
   point syntax.
-- The [paho-mqtt
-  plugin](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/mqtt/tavernhook.py)
+- The [paho-mqtt plugin](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/mqtt/tavernhook.py)
   just uses a module using the `module.submodule` entry point syntax. This loads
   the schema from the file on import.
 - The
@@ -65,8 +63,7 @@ Examples:
 
 If your plugin needs extra metadata in each test to be able to make a request,
 extra schema data can be added with a `schema` key in your entry point. This
-should be a dictionary which is just merged into the [base
-schema](https://github.com/taverntesting/tavern/blob/master/tavern/schemas/tests.schema.yaml)
+should be a dictionary which is just merged into the [base schema](https://github.com/taverntesting/tavern/blob/master/tavern/schemas/tests.schema.yaml)
 for tests.
 
 There is currently only one key supported in the schema dictionary,
@@ -100,8 +97,7 @@ object, and for MQTT tests it is the same arguments as specified in the
 If your plugin does not support some of these arguments, raise a
 `NotImplementedError` which a short message explaining that it is not supported.
 
-2. After creating the instance, it must be able to be used as a [context
-manager](https://docs.python.org/3/library/stdtypes.html#typecontextmanager).
+2. After creating the instance, it must be able to be used as a [context manager](https://docs.python.org/3/library/stdtypes.html#typecontextmanager).
 If you don't need any functionality provided by this, you can define empty
 `__enter__` and `__exit__` methods on your class like so:
 
@@ -133,10 +129,8 @@ plugin. It takes 3 arguments:
 
 - `rspec` is a dictionary corresponding to the request at that stage. If you are
   writing a HTTP plugin, the dictionary will contain the keys as described in
-  the [http request
-  documentation](https://taverntesting.github.io/documentation#request). If it
-  is an MQTT plugin, it will contain keys described in the [MQTT publish
-  documentation](https://taverntesting.github.io/documentation#mqtt-publishing-options).
+  the [http request documentation](https://taverntesting.github.io/documentation#request). If it
+  is an MQTT plugin, it will contain keys described in the [MQTT publish documentation](https://taverntesting.github.io/documentation#mqtt-publishing-options).
 
 - `test_block_config` is the global configuration for that test. At a minimum it
   will contain a key called `variables`, which contains all of the current
@@ -234,8 +228,7 @@ Like with a request, Tavern knows which verifier to use by looking at the
 
 Examples:
 
-- The [base
-  requests verifier](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/response.py)
+- The [base requests verifier](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/response.py)
   Checks a variety of things like the expected headers, expected redirect
   locations, cookies, etc.
 - The
