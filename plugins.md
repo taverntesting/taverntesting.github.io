@@ -28,6 +28,39 @@ plugin.
 The entry point needs to point to either a class or a module which defines a
 preset number of variables.
 
+Something like this should be in your `setup.py` or `setup.cfg` to make sure
+Tavern can pick it up at run time:
+
+```conf
+# setup.cfg
+
+# A http plugin. tavern_http is the entry point that Tavern searches for,
+# 'requests' is the name of your plugin which is selected using the
+# --tavern-http-backend command line flag. This points to a class in the
+# tavernhook module.
+tavern_http =
+    requests = tavern._plugins.rest.tavernhook:TavernRestPlugin
+
+# An MQTT plugin. Like above, tavern_mqtt is the entry point name and
+# 'paho-mqtt' is the name of the plugin. This points to a module.
+tavern_mqtt =
+    paho-mqtt = tavern._plugins.mqtt.tavernhook
+```
+
+Examples:
+
+- The [requests
+  based](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/rest/tavernhook.py)
+  http entry point points to a class using the `module.submodule:member` entry
+  point syntax.
+- The [paho-mqtt
+  plugin](https://github.com/taverntesting/tavern/blob/master/tavern/_plugins/mqtt/tavernhook.py)
+  just uses a module using the `module.submodule` entry point syntax. This loads
+  the schema from the file on import.
+- The
+  [tavern-flask](https://github.com/taverntesting/tavern-flask/blob/master/tavern_flask/tavernhook.py)
+  plugin also just uses a module.
+
 ### Extra schema data
 
 If your plugin needs extra metadata in each test to be able to make a request,
