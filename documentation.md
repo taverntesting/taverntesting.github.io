@@ -165,6 +165,15 @@ variable to be used is encased in curly brackets and an optional
 [type code](https://docs.python.org/2/library/string.html#format-specification-mini-language)
 can be passed after a colon.
 
+This means that if you want to pass a literal `{` or `}` in a request (or expect
+it in a response), it must be escaped by doubling it:
+
+```yaml
+request:
+  json:
+    graphql_query: "{{ user(id: 123) {{ first_name }} }}"
+```
+
 Since `0.5.0`, Tavern also has some 'magic' variables available in the `tavern`
 key for formatting.
 
