@@ -141,6 +141,95 @@ It is also possible to save data using function calls, explained below.
 For a more formal definition of the schema that the tests are validated against,
 check `tavern/schemas/tests.schema.yaml` in the main Tavern repository.
 
+## Variable formatting
+
+Variables can be used to prevent hardcoding data into each request, either from
+included global configuration files or saving data from previous stages of a
+test (how these variables are 'injected' into a test is described in more detail
+in the relevant sections).
+
+An example of accessing a string from a configuration file which is then passed
+in the request:
+
+```yaml
+request:
+  json:
+    variable_key: "{key_name:s}"
+    # or
+    variable_key: "{key_name}"
+```
+
+This is formatted using Python's [string formatting
+syntax](https://docs.python.org/2/library/string.html#format-string-syntax). The
+variable to be used is encased in curly brackets and an optional
+[type code](https://docs.python.org/2/library/string.html#format-specification-mini-language)
+can be passed after a colon.
+
+Since `0.5.0`, Tavern also has some 'magic' variables available in the `tavern`
+key for formatting.
+
+### Request variables
+
+This currently includes all request variables and is available under the
+`request_vars` key. Say we want to test a server that updates a user's profile
+and returns the change:
+
+```
+---
+test_name: Check server responds with updated data
+
+stages:
+  - name: Send message, expect it to be echoed back
+    request:
+      method: POST
+      url: "www.example.com/user"
+      json:
+        welcome_message: "hello"
+      params:
+        user_id: abc123
+    response:
+      status_code: 200
+      body:
+        user_id: "{tavern.request_vars.params.user_id}"
+        new_welcome_message: "{tavern.request_vars.json.message}"
+```
+
+This example uses `json` and `params` - we can also use any of the other request
+parameters like `method`, `url`, etc.
+
+### Environment variables
+
+Environment variables are also available under the `env_vars` key. If a server
+being tested against requires a password, bearer token, or some other form of
+authorisation that you don't want to ship alongside the test code, it can be
+accessed via this key (for example, in CI).
+
+```
+---
+test_name: Test getting user information requires auth
+
+stages:
+  - name: Get information without auth fails
+    request:
+      method: GET
+      url: "www.example.com/get_info"
+    response:
+      status_code: 401
+      body:
+        error: "No authorization"
+
+  - name: Get information with admin token
+    request:
+      method: GET
+      url: "www.example.com/get_info"
+      headers:
+        Authorization: "Basic {tavern.env_vars.SECRET_CI_COMMIT_AUTH}"
+    response:
+      status_code: 200
+      body:
+        name: "Joe Bloggs"
+```
+
 ## Calling external functions
 
 Not every response can be validated simply by checking the values of keys, so with
@@ -450,73 +539,6 @@ stages:
         user_id: 123
       headers:
         content-type: application/json
-```
-
-## Magic format variables
-
-Since `0.5.0`, Tavern also has some 'magic' variables available in the `tavern`
-key for formatting.
-
-### Request variables
-
-This currently includes all request variables and is available under the
-`request_vars` key. Say we want to test a server that updates a user's profile
-and returns the change:
-
-```
----
-test_name: Check server responds with updated data
-
-stages:
-  - name: Send message, expect it to be echoed back
-    request:
-      method: POST
-      url: "www.example.com/user"
-      json:
-        welcome_message: "hello"
-      params:
-        user_id: abc123
-    response:
-      status_code: 200
-      body:
-        user_id: "{tavern.request_vars.params.user_id}"
-        new_welcome_message: "{tavern.request_vars.json.message}"
-```
-
-This example uses `json` and `params` - we can also use any of the other request
-parameters like `method`, `url`, etc.
-
-### Environment variables
-
-Environment variables are also available under the `env_vars` key. If a server
-being tested against requires a password, bearer token, or some other form of
-authorisation that you don't want to ship alongside the test code, it can be
-accessed via this key (for example, in CI).
-
-```
----
-test_name: Test getting user information requires auth
-
-stages:
-  - name: Get information without auth fails
-    request:
-      method: GET
-      url: "www.example.com/get_info"
-    response:
-      status_code: 401
-      body:
-        error: "No authorization"
-
-  - name: Get information with admin token
-    request:
-      method: GET
-      url: "www.example.com/get_info"
-      headers:
-        Authorization: "Basic {tavern.env_vars.SECRET_CI_COMMIT_AUTH}"
-    response:
-      status_code: 200
-      body:
-        name: "Joe Bloggs"
 ```
 
 ## Reusing requests and YAML fragments

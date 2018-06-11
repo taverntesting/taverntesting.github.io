@@ -258,23 +258,6 @@ save:
     next_redirect_location: location
 ```
 
-### Using saved data
-
-```yaml
-<key>: "{<variable name>:<type code>}"
-```
-
-Saved data can be used in later tests using Python's [string formatting
-syntax](https://docs.python.org/2/library/string.html#format-string-syntax). The
-variable to be used is encased in curly brackets and an optional
-[type code](https://docs.python.org/2/library/string.html#format-specification-mini-language)
-can be passed after a colon.
-
-```yaml
-headers:
-  Authorization: "Bearer {test_login_token:s}"
-```
-
 ### External functions
 
 Python functions can be called inside tests to perform operations on data which
