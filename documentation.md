@@ -470,12 +470,146 @@ stage if wanted.
 Example:
 
 ```shell
-$ py.test --tavern-strict body 
+# Enable strict checking for body and headers only
+py.test --tavern-strict body headers -- my_test_folder/
 ```
 
 ### Per test
 
-Strictness 
+Strictness can also be enabled or disabled on a per-test basis. The `strict` key
+at the top level of the test should be one of `body`, `headers`, or
+`redirect_query_params`, or a list consisting of a combination of the three.
+
+```yaml
+---
+
+test_name: Make sure the headers match what I expect exactly
+
+strict: headers
+
+# This can also be done like this:
+# strict:
+#   - headers
+
+stages:
+  - name: Try to get user
+    request:
+      url: "{host}/users/joebloggs"
+      method: GET
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+        content-length: 20
+        x-my-custom-header: chocolate
+      body:
+        id: 1
+---
+
+test_name: Make sure the headers and body match what I expect exactly
+
+strict:
+  - headers
+  - body
+
+stages:
+  - name: Try to get user
+    request:
+      url: "{host}/users/joebloggs"
+      method: GET
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+        content-length: 20
+        x-my-custom-header: chocolate
+      body:
+        id: 1
+        first_name: joe
+        last_name: bloggs
+        email: joe@bloggs.com
+```
+
+### Per stage
+
+Often you have a standard stage before other stages, such as logging in to your
+server, where you only care if it returns a 200 to indicate that you're logged
+in. To facilitate this, you can enable or disable strict key checking on a
+per-stage basis as well.
+
+Two examples for doing this - these examples should behave identically:
+
+```yaml
+---
+
+# Enable strict checking for this test, but disable it for the login stage
+
+test_name: Login and create a new user
+
+strict:
+  - body
+
+stages:
+  - name: log in
+    request:
+      url: "{host}/users/joebloggs"
+      method: GET
+    response:
+      strict: False
+      status_code: 200
+      json:
+        logged_in: True
+        # Ignores any extra metadata like user id, last login, etc.
+
+  - name: Create a new user
+    request:
+      url: "{host}/users/joebloggs"
+      method: POST
+      json: &create_user
+        first_name: joe
+        last_name: bloggs
+        email: joe@bloggs.com
+    response:
+      status_code: 200
+      body:
+        <<: *create_user
+        id: 1
+```
+
+```yaml
+---
+
+# Enable strict checking only for the second stage (assuming strict checking is
+# globally disabled).
+
+test_name: Login and create a new user
+
+stages:
+  - name: log in
+    request:
+      url: "{host}/users/joebloggs"
+      method: GET
+    response:
+      status_code: 200
+      json:
+        logged_in: True
+        # Ignores any extra metadata like user id, last login, etc.
+
+  - name: Create a new user
+    request:
+      url: "{host}/users/joebloggs"
+      method: POST
+      json: &create_user
+        first_name: joe
+        last_name: bloggs
+        email: joe@bloggs.com
+    response:
+      status_code: 200
+      strict: body
+      body:
+        <<: *create_user
+        id: 1
+```
 
 # Test definitions
 
