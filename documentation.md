@@ -99,7 +99,8 @@ documentation](http://docs.python-requests.org/en/master/api/#requests.request).
 The **response** describes what we expect back. There are a few keys for verifying
 the response:
 
-- `status_code` - an integer corresponding to the status code that we expect.
+- `status_code` - an integer corresponding to the status code that we expect, or
+  a list of status codes if you are expecting one of a few status codes.
   Defaults to `200` if not defined.
 - `body` - Assuming the response is json, check the body against the values
   given. Expects a mapping (possibly nested) key: value pairs/lists.
@@ -399,6 +400,36 @@ will either need to put it into another file which you then include, or perform
 the same request in each test to re-fetch the data.
 
 # Test definitions
+
+## Using multiple status codes
+
+If the server you are contacting might return one of a few different status
+codes depending on it's internal state, you can write a test that has a list of
+status codes in the expected response.
+
+Say for example we want to try and get a user's details from a server - if it
+exists, it returns a 200. If not, it returns a 404. We don't care which one, as
+long as it it only one of those two codes.
+
+```yaml
+---
+
+test_name: Make sure that the server will either return a 200 or a 404
+
+stages:
+  - name: Try to get user
+    request:
+      url: "{host}/users/joebloggs"
+      method: GET
+    response:
+      status_code:
+        - 200
+        - 404
+```
+
+Note that there is no way to do something like this for the body of the
+response, so unless you are expecting the same response body for every possible
+status code, the `body` key should be left blank.
 
 ## Sending form encoded data
 
