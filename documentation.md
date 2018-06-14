@@ -1269,6 +1269,8 @@ The keys which can be used:
   serialized into JSON that must match the payload of a message published to
   `topic`.
 - `timeout`: How many seconds to wait for the message to arrive. Defaults to 3.
+- `qos`: The level of QoS to subscribe to the topic with. This defaults to 1,
+  and it is unlikely that you will need to ever set this value manually.
 
 ## Mixing MQTT tests and HTTP tests
 
@@ -1385,12 +1387,13 @@ stages:
       topic: /device/123
       payload: "hello"
       timeout: 5
+      qos: 2
 ```
 
 Before running the `request` in this stage, Tavern will subscribe to
-`/device/123`. After making the request (and getting the correct response from
-the server!), it will wait 5 seconds for a message to be published on that
-topic.
+`/device/123` with QoS level 2. After making the request (and getting the
+correct response from the server!), it will wait 5 seconds for a message to be
+published on that topic.
 
 **Note**: You can only have one of `request` or `mqtt_publish` in a test stage.
 If you need to publish a message and send a HTTP request in sequence, use an
