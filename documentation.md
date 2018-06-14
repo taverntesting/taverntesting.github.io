@@ -399,6 +399,84 @@ anchors as described below). If you need to use the data in multiple tests, you
 will either need to put it into another file which you then include, or perform
 the same request in each test to re-fetch the data.
 
+## Strict key checking
+
+**NOTE**: At the time of writing, Tavern will by default not perform 'strict'
+key checking on the top level keys in the response, but will perform it on all
+keys below that. This 'legacy' behaviour will be changed in a future version, see
+below for details.
+
+'Strict' key checking can be enabled or disabled globally, per test, or per
+stage. 'Strict' key checking refers to whether extra keys in the response should
+be ignored or whether they should raise an error. There are currently 3 levels
+of strict checking in Tavern, which only apply to HTTP tests. With strict key
+checking enabled, all keys in dictionaries at all levels have to match or it
+will raise an error. With it disabled, Extra keys in the response will be
+ignored. If it is not set at all, 'legacy' behaviour is used.
+
+This is best explained through an example. If we expect this response from a
+server:
+
+```json
+{
+  "first": 1,
+  "second": {
+    "nested": 2
+  }
+}
+```
+
+This is what we would put in our Tavern test:
+
+```yaml
+...
+response:
+  body:
+    first: 1
+    second:
+      nested: 2
+```
+
+The behaviour of various levels of 'strictness' based on the response:
+
+| Response | True | False | 'legacy' |
+|----|--------|------|-------|----------|
+| ` { "first": 1, "second": { "nested": 2 } } `  | PASS | PASS | PASS |
+| ` { "first": 1 } `  | FAIL | PASS | PASS |
+| ` { "first": 1, "second": { "another": 2 } } `  | FAIL | FAIL | FAIL |
+| ` { "first": 1, "second": { "nested": 2, "another": 2 } } `  | FAIL | PASS | FAIL |
+
+As you can see from the table, the 'legacy' behaviour only cares about keys
+below the top level which was a design flaw. This behaviour will be removed in a
+future version, but has been left in for the time being to maintain backwards
+compatability.
+
+The strictness setting does not only apply to the body however, it can also be
+used on the headers and redirect query parameters.
+
+This setting can be controlled in 3 different ways.
+
+### Command line
+
+There is a command line argument, `--tavern-strict`, which controls the default
+global strictness setting. If not set, this uses the 'legacy' behaviour - in
+future, this will default to 'strict' key checking being disabled. This is
+mainly because a lot of web programs will return a huge number of headers which
+you don't want to include in every test, and when checking the body you normally
+only want to check that it returns the data you want and not care about any
+extra metadata sent with the response. This can be re-enabled per test or per
+stage if wanted.
+
+Example:
+
+```shell
+$ py.test --tavern-strict body 
+```
+
+### Per test
+
+Strictness 
+
 # Test definitions
 
 ## Using multiple status codes
