@@ -1459,6 +1459,23 @@ marks:
   - skip
 ```
 
+Separately from the markers, individual stages can be skipped by inserting the
+`skip` keyword into the stage:
+
+```yaml
+stages:
+  - name: Get info
+    skip: True
+    request:
+      url: "{host}/get-info-slow"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        n_users: 2048
+        n_queries: 10000
+```
+
 #### skipif
 
 Sometimes you just want to skip some tests, perhaps based on which server you're
