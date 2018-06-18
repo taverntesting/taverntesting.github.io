@@ -1443,6 +1443,9 @@ Conversely, if we just want to run all tests marked as 'fast', we can do this:
 $ py.test -m "fast"
 ```
 
+Marks can only be applied to a whole test, not to individual stages (with the
+exception of `skip`, see below).
+
 ### Special marks
 
 There are 3 different 'special' marks from Pytest which behave the same as if
