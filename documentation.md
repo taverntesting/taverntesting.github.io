@@ -1448,10 +1448,9 @@ $ py.test -m "fast"
 There are 3 different 'special' marks from Pytest which behave the same as if
 they were used on a Python test.
 
-#### skip/skipif
+#### skip
 
-These markers can be used to conditionally or undconditionally skip a test. To
-always skip a test, just use the `skip` marker:
+To always skip a test, just use the `skip` marker:
 
 ```yaml
 ...
@@ -1459,6 +1458,8 @@ always skip a test, just use the `skip` marker:
 marks:
   - skip
 ```
+
+#### skipif
 
 Sometimes you just want to skip some tests, perhaps based on which server you're
 using. Taking the above example of the 'slow' server, perhaps it is only slow
@@ -1488,8 +1489,9 @@ stages:
 `skipif` should be a mapping containing 1 key, a string that will be directly
 passed through to `eval()` and should return `True` or `False`. This string will
 be formatted first, so tests can be skipped or not based on values in the
-configuration. Because this needs to be a valid piece of Python code, strings
-must be escaped as in the example above.
+configuration. Because this needs to be a valid piece of Python code, formatted
+strings must be escaped as in the example above - using `"'slow-example.com' in
+{host}"` will raise an error.
 
 #### xfail
 
