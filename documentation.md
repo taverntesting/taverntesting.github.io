@@ -1383,7 +1383,7 @@ implementation details, see their
 
 Since 0.11.0, it is possible to 'mark' tests. This uses Pytest behind the
 scenes - see the [pytest mark documentation](https://docs.pytest.org/en/latest/example/markers.html)
-for details on their implementation.
+for details on their implementation and prerequisites for use.
 
 In short, marks can be used to:
 
@@ -1541,7 +1541,7 @@ marks:
   - xfail
 
 stages:
-  - name: Try to 
+  - name: Try to get from v2 api
     request:
       url: "{host}/api/v2/users/{user_id}/get-middle-name"
       method: GET
