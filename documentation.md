@@ -1381,7 +1381,7 @@ implementation details, see their
 
 **The section on marking tests only applies if you are using Pytest**
 
-Since 0.11.0, it is possible to 'mark' tests (not individual stages!). This uses Pytest behind the
+Since 0.11.0, it is possible to 'mark' tests. This uses Pytest behind the
 scenes - see the [pytest mark documentation](https://docs.pytest.org/en/latest/example/markers.html)
 for details on their implementation.
 
