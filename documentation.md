@@ -1377,6 +1377,165 @@ By default, the sending of files is handled by the Requests library - to see the
 implementation details, see their
 [documentation](http://docs.python-requests.org/en/master/user/quickstart/#post-a-multipart-encoded-file).
 
+## Marking tests
+
+**The section on marking tests only applies if you are using Pytest**
+
+Since 0.11.0, it is possible to 'mark' tests (not individual stages!). This uses Pytest behind the
+scenes - see the [pytest mark documentation](https://docs.pytest.org/en/latest/example/markers.html)
+for details on their implementation.
+
+In short, marks can be used to:
+
+- Select a subset of marked tests to run from the command line
+- Skip certain tests based on a condition
+- Mark tests as temporarily expected to fail, so they can be fixed later
+
+An example of how these can be used:
+
+```yaml
+---
+test_name: Get server info from slow endpoint
+
+marks:
+  - slow
+
+stages:
+  - name: Get info
+    request:
+      url: "{host}/get-info-slow"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        n_users: 2048
+        n_queries: 10000
+
+---
+test_name: Get server info from fast endpoint
+
+marks:
+  - fast
+
+stages:
+  - name: Get info
+    request:
+      url: "{host}/get-info"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        n_items: 2048
+        n_queries: 5
+```
+
+Both tests get some server information from our endpoint, but one requires a lot
+of backend processing so we don't want to run it on every test run. This can be
+selected like this:
+
+```shell
+$ py.test -m "not slow"
+```
+
+Conversely, if we just want to run all tests marked as 'fast', we can do this:
+
+```shell
+$ py.test -m "fast"
+```
+
+### Special marks
+
+There are 3 different 'special' marks from Pytest which behave the same as if
+they were used on a Python test.
+
+#### skip/skipif
+
+These markers can be used to conditionally or undconditionally skip a test. To
+always skip a test, just use the `skip` marker:
+
+```yaml
+...
+
+marks:
+  - skip
+```
+
+Sometimes you just want to skip some tests, perhaps based on which server you're
+using. Taking the above example of the 'slow' server, perhaps it is only slow
+when running against the live server at `www.slow-example.com`, but we still want to
+run it in our local tests. This can be achieved using `skipif`:
+
+```yaml
+---
+test_name: Get server info from slow endpoint
+
+marks:
+  - slow
+  - skipif: "'slow-example.com' in '{host}'"
+
+stages:
+  - name: Get info
+    request:
+      url: "{host}/get-info-slow"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        n_users: 2048
+        n_queries: 10000
+```
+
+`skipif` should be a mapping containing 1 key, a string that will be directly
+passed through to `eval()` and should return `True` or `False`. This string will
+be formatted first, so tests can be skipped or not based on values in the
+configuration. Because this needs to be a valid piece of Python code, strings
+must be escaped as in the example above.
+
+#### xfail
+
+If you are expecting a test to fail for some reason, such as if it's temporarily
+broken, a test can be marked as `xfail`. Note that this is probably not what you
+want to 'negatively' check something like an API deprecation. For example, this
+is not recommended:
+
+```yaml
+---
+test_name: Get user middle name from endpoint on v1 api
+
+stages:
+  - name: Get from endpoint
+    request:
+      url: "{host}/api/v1/users/{user_id}/get-middle-name"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        middle_name: Jimmy
+
+---
+test_name: Get user middle name from endpoint on v2 api fails
+
+marks:
+  - xfail
+
+stages:
+  - name: Try to 
+    request:
+      url: "{host}/api/v2/users/{user_id}/get-middle-name"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        middle_name: Jimmy
+```
+
+It would be much better to write a test that made sure that the endpoint just
+returned a `404` in the v2 api.
+
+**NOTE**: If you look in the Tavern integration tests, you may notice a
+`_xfail` key being used in some of the tests. This is for INTERNAL USE ONLY and
+may be removed in future without warning.
+
 # MQTT integration testing
 
 ## Testing with MQTT messages
