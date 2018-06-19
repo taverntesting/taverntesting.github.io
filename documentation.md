@@ -5,7 +5,9 @@ If you haven't already, it's worth looking through the [examples](/examples)
 before diving into this.
 
 Note that Tavern **only** supports Python 2.7/3.4 and up. At the time of writing we
-test against Python 2.7/3.4-3.6 and pypy/pypy3.
+test against Python 2.7/3.4-3.6 and pypy/pypy3. Using Python 3 is strongly
+advised over using Python 2, and support for Python 2 is likely to be dropped in
+future.
 
 ## Contents
 {:.no_toc}
