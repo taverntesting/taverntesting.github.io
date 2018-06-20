@@ -1450,8 +1450,12 @@ exception of `skip`, see below).
 
 ### Special marks
 
-There are 3 different 'special' marks from Pytest which behave the same as if
+There are 4 different 'special' marks from Pytest which behave the same as if
 they were used on a Python test.
+
+**NOTE**: If you look in the Tavern integration tests, you may notice a
+`_xfail` key being used in some of the tests. This is for INTERNAL USE ONLY and
+may be removed in future without warning.
 
 #### skip
 
@@ -1556,9 +1560,84 @@ stages:
 It would be much better to write a test that made sure that the endpoint just
 returned a `404` in the v2 api.
 
-**NOTE**: If you look in the Tavern integration tests, you may notice a
-`_xfail` key being used in some of the tests. This is for INTERNAL USE ONLY and
-may be removed in future without warning.
+#### parametrize
+
+A lot of the time you want to make sure that your API will behave properly for a
+number of given inputs. This is where the parametrize mark comes in:
+
+```yaml
+---
+test_name: Make sure backend can handle arbitrary data
+
+marks:
+  - parametrize:
+      key: metadata
+      vals:
+        - 13:00
+        - Reading: 27 degrees
+        - 手机号格式不正确
+        - ""
+
+stages:
+  - name: Update metadata
+    request:
+      url: "{host}/devices/{device_id}/metadata"
+      method: POST
+      json:
+        metadata: "{metadata}"
+    response:
+      status_code: 200
+```
+
+This test will be run 4 times, as 4 separate tests, with `metadata` being
+formatted differently for each time. This behaves like the built in Pytest
+`parametrize` mark, where the tests will show up in the log with some extra data
+appended to show what was being run, eg `Test Name[John]`, `Test Name[John-Smythe John]`, etc.
+
+The `parametrize` make should be a mapping with `key` being the value that will
+be formatted and `vals` being a list of values to be formatted. Note that
+formatting of these values happens after checking for a `skipif`, so a `skipif`
+mark cannot rely on a parametrized value.
+
+Multiple marks can be used to parametrize multiple values:
+
+```yaml
+---
+test_name: Test post a new fruit
+
+marks:
+  - parametrize:
+      key: fruit
+      vals:
+        - apple
+        - orange
+        - pear
+  - parametrize:
+      key: edible
+      vals:
+        - rotten
+        - fresh
+        - unripe
+
+stages:
+  - name: Create a new fruit entry
+    request:
+      url: "{host}/fruit"
+      method: POST
+      json:
+        fruit_type: "{edible} {fruit}"
+    response:
+      status_code: 201
+```
+
+This will result in 9 tests being run:
+
+- rotten apple
+- rotten orange
+- rotten pear
+- fresh apple
+- fresh orange
+- etc.
 
 # MQTT integration testing
 
