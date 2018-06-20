@@ -144,24 +144,32 @@ test_server.tavern.yaml ..
 ===================== 2 passed, 2 skipped in 0.07 seconds ======================
 ```
 
-The Python library allows you to include Tavern tests in deploy scripts written in Python, or for use with a continuous integration setup:
-
-```python
-from tavern.core import run
-
-success = run("test_server.tavern.yaml", {})
-
-if not success:
-    print("Error running tests")
-```
-
-The command line tool is useful for bash scripting, for example if you want to verify that an API is works before deploying it, or for cron jobs. 
+The command line tool is useful for bash scripting, for example if you want to verify that an API is works before deploying it, or for cron jobs.
 
 ```bash
 $ tavern-ci test_server.tavern.yaml
 $ echo $?
 0
 ```
+
+The Python library allows you to include Tavern tests in deploy scripts written in Python, or for use with a continuous integration setup:
+
+```python
+from tavern.core import run
+
+success = run("test_server.tavern.yaml")
+
+if not success:
+    print("Error running tests")
+```
+
+See the documentation section on global configuration for use of the second
+argument.
+
+**Note**: Since Tavern 0.12.0, `tavern-ci` and the `run()` entry point will run
+a Pytest instance in the background. Maintaining 3 different entry points which
+each had separate behaviour was causing issues. For details on how to use it,
+see the [documentation](/documentation).
 
 ## 3) Multi-stage tests
 

@@ -1232,6 +1232,50 @@ tavern-global-cfg=
     test_urls.yaml
 ```
 
+## Using the run() function
+
+Because the `run()` function (see [examples](/examples)) calls directly into the
+library, there is no nice way to control which global configuration to use - for
+this reason, you can pass a dictionary into `run()` which will then be used as
+global configuration. This should have the same structure as any other global
+configuration file:
+
+```python
+from tavern.core import run
+
+extra_cfg = {
+    "variables": {
+        "key_1": "value":,
+        "key_2": 123,
+    }
+}
+
+success = run("test_server.tavern.yaml", extra_cfg)
+```
+
+This is also how things such as strict key checking is controlled via the
+`run()` function. Extra keyword arguments that are taken by this function:
+
+- `tavern_strict` - Controls strict key checking (see section on strict key
+  checking for details)
+- `tavern_mqtt_backend` and `tavern_http_backend` controls which backend to use
+  for those requests (see [plugins](/plugins) for details)
+- `pytest_args` - A list of any extra arguments you want to pass directly
+  through to Pytest.
+
+An example of using `pytest_args` to exit on the first failure:
+
+
+```python
+from tavern.core import run
+
+success = run("test_server.tavern.yaml", pytest_args=["-x"])
+```
+
+`run()` will use a Pytest instance to actually run the tests, so these values
+can also be controlled just by putting them in the appropriate Pytest
+configuration file (such as your `setup.cfg` or `pytest.ini`).
+
 ## Matching arbitrary return values in a response
 
 Sometimes you want to just make sure that a value is returned, but you don't
@@ -1862,7 +1906,7 @@ sending a HTTP request results in an MQTT message being sent.
 Say we have a server that takes a device id and publishes an MQTT message to it
 saying hello:
 
-```
+```yaml
 ---
 
 test_name: Make sure posting publishes mqtt message
