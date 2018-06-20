@@ -174,7 +174,7 @@ it in a response), it must be escaped by doubling it:
 ```yaml
 request:
   json:
-    graphql_query: "{{ user(id: 123) {{ first_name }} }}"
+    graphql_query: "{%raw%}{{ user(id: 123) {{ first_name }} }}{%endraw%}"
 ```
 
 Since `0.5.0`, Tavern also has some 'magic' variables available in the `tavern`
