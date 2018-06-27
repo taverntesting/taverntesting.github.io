@@ -87,8 +87,9 @@ library (after preprocessing) - at the moment the only supported keys are:
   converted to JSON and sent as the request body.
 - `params` - a mapping of key: value pairs that will go into the query
   parameters.
-- `data` - a mapping of key: value pairs that will go into the body as
-  application/x-www-url-formencoded data.
+- `data` - Either a mapping of key: value pairs that will go into the body as
+  application/x-www-url-formencoded data, or a string that will be sent by
+  itself (with no content-type).
 - `headers` - a mapping of key: value pairs that will go into the headers. Defaults
   to adding a `content-type: application/json` header.
 - `method` - one of GET, POST, PUT, or DELETE. Defaults to GET if not defined
