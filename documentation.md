@@ -92,7 +92,8 @@ library (after preprocessing) - at the moment the only supported keys are:
   itself (with no content-type).
 - `headers` - a mapping of key: value pairs that will go into the headers. Defaults
   to adding a `content-type: application/json` header.
-- `method` - one of GET, POST, PUT, or DELETE. Defaults to GET if not defined
+- `method` - one of GET, POST, PUT, DELETE, PATCH, OPTIONS, or HEAD. Defaults to
+  GET if not defined
 
 For more information, refer to the [requests
 documentation](http://docs.python-requests.org/en/master/api/#requests.request).
