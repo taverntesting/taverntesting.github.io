@@ -1685,6 +1685,81 @@ This will result in 9 tests being run:
 - fresh orange
 - etc.
 
+#### usefixtures
+
+Since 0.15.0 there is limited support for Pytest
+[fixtures](https://docs.pytest.org/en/latest/fixture.html) in Tavern tests. This
+is done by using the `usefixtures` mark. The return (or `yield`ed) values of any
+fixtures will be available to use in formatting, using the name of the fixture.
+
+An example of how this can be used in a test:
+
+```python
+# conftest.py
+
+import pytest
+import logging
+import time
+
+@pytest.fixture
+def server_password():
+    with open("/path/to/password/file", "r") as pfile:
+        password = pfile.read().strip()
+
+    return password
+
+@pytest.fixture(name="time_request")
+def fix_time_request():
+    t0 = time.time()
+
+    yield
+
+    t1 = time.time()
+
+    logging.info("Test took %s seconds", t1 - t0)
+```
+
+```yaml
+---
+test_name: Make sure server can handle a big query
+
+marks:
+  - usefixtures:
+      - time_request
+      - server_password
+
+stages:
+  - name: Do big query
+    request:
+      url: "{host}/users"
+      method: GET
+      params:
+        n_items: 1000
+      headers:
+        authorization: "Basic {server_password}"
+    response:
+      status_code: 200
+      body:
+        ...
+```
+
+The above example will load basic auth credentials from a file, which will be
+used to authenticate against the server. It will also time how long the test
+took and log it.
+
+`usefixtures` expects a list of fixture names which are then loaded by Pytest -
+look at their documentation to see how discovery etc. works.
+
+There are some limitations on fixtures:
+
+- Fixtures are per _test_, not per stage. The above example of timing a test
+  will include the (small) overhead of doing validation on the responses,
+  setting up the requests session, etc. If the test consists of more than one
+  stage, it will time how long both stages took.
+- Fixtures should be 'function' or 'session' scoped. 'module' scoped fixtures
+  will raise an error and 'class' scoped fixtures may not behave as you expect.
+- Parametrizing fixtures does not work - this is a limitation in Pytest.
+
 # MQTT integration testing
 
 ## Testing with MQTT messages
