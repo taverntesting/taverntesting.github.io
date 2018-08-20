@@ -305,6 +305,9 @@ response:
                 required: True
 ```
 
+If an external function you are using raises any exception, the test will be
+considered failed. The return value from these functions is ignored.
+
 ### Saving data with external functions
 
 An external function can also be used to save data from the response. To do this,
