@@ -161,7 +161,9 @@ calling run() directly will now cause a pytest isntance to be run in the backgro
 
 ## 0.16.5          Fixes to requirements for development and working from local pypi indexes
 
-# 0.17.0          Add support for putting stages in included files which can be referred to by an id - see 57f2a10e58a88325c185258d2c83b07a532aa93a for details
+# 0.17.0          Add support for putting stages in included files which can be referred to by an id
+
+See 57f2a10e58a88325c185258d2c83b07a532aa93a for details
 
 ## 0.17.1          Dummy tag to attempt to make travis dpeloy, again
 
