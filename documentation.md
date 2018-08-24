@@ -1766,6 +1766,35 @@ By default, the sending of files is handled by the Requests library - to see the
 implementation details, see their
 [documentation](http://docs.python-requests.org/en/master/user/quickstart/#post-a-multipart-encoded-file).
 
+## Timeout on requests
+
+If you want to specify a timeout for a request, this can be done using the
+`timeout` parameter:
+
+```yaml
+---
+test_name: Get server info from slow endpoint
+
+stages:
+  - name: Get info
+    request:
+      url: "{host}/get-info-slow"
+      method: GET
+      timeout: 0.5
+    response:
+      status_code: 200
+      body:
+        n_users: 2048
+        n_queries: 10000
+```
+
+If this request takes longer than 0.5 seconds to respond, the test will be
+considered as failed. A 2-tuple can also be passed - the first value will be a
+_connection_ timeout, and the second value will be the response timeout. By
+default this uses the Requests implementation of timeouts - see [their
+documentation](http://docs.python-requests.org/en/master/user/advanced/#timeouts)
+for more details.
+
 # MQTT integration testing
 
 ## Testing with MQTT messages
