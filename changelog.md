@@ -104,3 +104,67 @@ currently the only key in 'meta' is clear_session_cookies which wipes the sessio
 - Add verification for multiple status codes
 - Improve 'doc' of test for pytest-pspec
 - Add internal xfail for testing Tavern
+
+# 0.12.0          Add parametrize mark and make run() use pytest.main in the background
+
+See https://github.com/taverntesting/tavern/issues/127#issuecomment-398409023
+
+calling run() directly will now cause a pytest isntance to be run in the background. This is to avoid having to maintain code and documentation for two separate entry points
+
+## 0.12.1          Flesh out the 'run' function a bit more so it can mostly be used to pass in all config values without having to have a Pytest config file
+
+## 0.12.2          Fix Pylint
+
+## 0.12.3          Fix extra expected keys beign ignroed in responses sometimes
+
+## 0.12.4          Fix case matching with headers
+
+# 0.13.0          Add new flag to enable 'fancy' formatting on errors
+
+## 0.13.1          Fix python 2 error
+
+## 0.13.2          Bug fixes to logging and parametrization
+
+## 0.13.3          Fix new traceback errors when anystr/anybool/etc was used
+
+## 0.13.4          Fix to formatting empty bodies in response with new traceback
+
+## 0.13.5          Fix for Python 2 regex function
+
+# 0.14.0          Allow sending of raw data in the 'data' key for a HTTP request
+
+## 0.14.1          CI fix
+
+## 0.14.2          CI fix
+
+## 0.14.3          Fix header value comparisons
+
+## 0.14.4          Pylint fix
+
+## 0.14.5          Add support for the 'stream' requests flag
+
+# 0.15.0          Add basic pytest fixture support
+
+## 0.15.1          Fix boolean conversion with anybool tag
+
+## 0.15.2          Travis deployment fix
+
+# 0.16.0          Add 'raw' token to alow using curly braces in strings
+
+## 0.16.1          fix delay before/after bug
+
+## 0.16.2          dummy bump tag for travis deploy
+
+## 0.16.3          dummy bump tag for travis deploy
+
+## 0.16.4          dummy bump tag for travis deploy
+
+## 0.16.5          Fixes to requirements for development and working from local pypi indexes
+
+# 0.17.0          Add support for putting stages in included files which can be referred to by an id - see 57f2a10e58a88325c185258d2c83b07a532aa93a for details
+
+## 0.17.1          Dummy tag to attempt to make travis dpeloy, again
+
+## 0.17.2          Stop wrapping responses/schemas in files for verification
+
+# 0.18.0          Add 'timeout' parameter for http requests
