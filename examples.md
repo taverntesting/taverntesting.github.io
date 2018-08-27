@@ -462,11 +462,15 @@ human-readable explanation as to why the test failed.
 
 Though this does give a lot of information about exactly when and where a test
 failed, it's not very easy to tell what input actually caused this error. Since
-0.13.0, you can use the `tavern-beta-new-traceback` flag, either in the
-configuration file or on the command line, to give a much nicer output showing
-the original source code for the stage, the formatted stages that Tavern uses to
-send the request, and any format variables. Rather than the Python traceback as
-shown above, we get an error output like this:
+0.13.0, you can use the `tavern-beta-new-traceback` flag to give a much nicer
+output showing the original source code for the stage, the formatted stages that
+Tavern uses to send the request, and any format variables. This is used like any
+other Pytest flag:
+
+1. Passed on on the command line using `--tavern-beta-new-traceback`
+2. Put in the Pytest configuration file (pytest.ini, setup.cfg, ...) `tavern_beta_new_traceback = True`
+
+Rather than the Python traceback as shown above, we get an error output like this:
 
 ```
 Format variables:
