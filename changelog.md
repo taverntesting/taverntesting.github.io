@@ -133,10 +133,6 @@ calling run() directly will now cause a pytest isntance to be run in the backgro
 
 # 0.14.0          Allow sending of raw data in the 'data' key for a HTTP request
 
-## 0.14.1          CI fix
-
-## 0.14.2          CI fix
-
 ## 0.14.3          Fix header value comparisons
 
 ## 0.14.4          Pylint fix
@@ -153,20 +149,14 @@ calling run() directly will now cause a pytest isntance to be run in the backgro
 
 ## 0.16.1          fix delay before/after bug
 
-## 0.16.2          dummy bump tag for travis deploy
-
-## 0.16.3          dummy bump tag for travis deploy
-
-## 0.16.4          dummy bump tag for travis deploy
-
 ## 0.16.5          Fixes to requirements for development and working from local pypi indexes
 
 # 0.17.0          Add support for putting stages in included files which can be referred to by an id
 
 See 57f2a10e58a88325c185258d2c83b07a532aa93a for details
 
-## 0.17.1          Dummy tag to attempt to make travis dpeloy, again
-
 ## 0.17.2          Stop wrapping responses/schemas in files for verification
 
 # 0.18.0          Add 'timeout' parameter for http requests
+
+# 0.18.1    Upload the content type along with the file if we can guess it
