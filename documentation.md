@@ -1194,6 +1194,42 @@ Having `delay_before` in the second stage of the test is semantically identical
 to having `delay_after` in the first stage of the test - feel free to use
 whichever seems most appropriate.
 
+## Retrying tests
+
+If you are not sure how long the server might take to process a request, you can
+also retry a stage a certain number of times using `max_retries`:
+
+```yaml
+---
+test_name: Poll until server is ready
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: polling
+    max_retries: 1
+    request:
+      url: "{host}/poll"
+      method: GET
+    response:
+      status_code: 200
+      body:
+        status: ready
+```
+
+This example will perform a `GET` request against `/poll`, and if it does not
+return the expected response, will try one more time, _immediately_. To wait
+before retrying a request, combine `max_retries` with `delay_after`.
+
+**NOTE**: You should think carefully about using retries when making a request
+that will change some state on the server or else you may get nondeterministic
+test results.
+
+MQTT tests can be retried as well, but you should think whether this
+is what you want - you could also try increasing the timeout on an expected MQTT
+response to achieve something similar.
+
 ## Marking tests
 
 **The section on marking tests only applies if you are using Pytest**
