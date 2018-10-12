@@ -124,8 +124,3 @@ Tavern makes use of several excellent open-source projects:
 - [pyjwt](https://github.com/jpadilla/pyjwt), for decoding JSON Web Tokens
 - [colorlog](https://github.com/borntyping/python-colorlog), for formatting terminal outputs
 - [paho-mqtt](https://github.com/eclipse/paho.mqtt.python), for sending MQTT messages
-
-
-## Developed and maintained by [Zoetrope Labs](https://zoetrope.io)
-
-At Zoetrope Labs we work with our clients to develop fantastic connected products. We're based in Bristol, UK, and we work with companies large and small to get industry leading hardware & software solutions to market.
