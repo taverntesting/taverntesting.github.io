@@ -350,10 +350,20 @@ save:
 In this case, both `{test_user_name}` and `{test_user_id}` are available for use
 in later requests.
 
+To make sure that Tavern can find this test function you need to make sure that
+it is in the Python path. For example, if `utils.py` is in the 'tests' folder,
+you will need to run your tests something like (on Linux):
+
+```shell
+$ PYTHONPATH=$PYTHONPATH:tests py.test tests/
+```
+
 For a more practical example, the built in `validate_jwt` function also returns the
-decoded token as a dictionary wrapped in a [Box](https://pypi.python.org/pypi/python-box/)
-object, which allows dot-notation access to members. This means that the contents of the
-token can be used for future requests.
+decoded token as a dictionary wrapped in a [Box]
+(https://pypi.python.org/pypi/python-box/) object, which allows dot-notation
+access to members. This means that the contents of the token can be used for
+future requests. Because Tavern will already be in the Python path (because you
+installed it as a library) you do not need to modify the `PYTHONPATH`.
 
 For example, if our server saves the user ID in the 'sub' field of the JWT:
 

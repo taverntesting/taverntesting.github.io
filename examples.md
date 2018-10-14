@@ -137,7 +137,7 @@ $ py.test
 platform linux -- Python 3.5.2, pytest-3.2.0, py-1.4.34, pluggy-0.4.0
 rootdir: /home/developer/project/tests, inifile: setup.cfg
 plugins: tavern-0.0.1
-collected 4 items 
+collected 4 items
 
 test_server.tavern.yaml ..
 
@@ -243,7 +243,7 @@ stages:
         content-type: application/json
 ```
 
-This example illustrates three major parts of the Tavern syntax: saving data, using that data in later requests and using validation functions. 
+This example illustrates three major parts of the Tavern syntax: saving data, using that data in later requests and using validation functions.
 
 ### Saving data for later requests
 
@@ -375,7 +375,7 @@ Some pytest options can be used to make the test output easier to read.
 - If you just want to run one test you can use the `-k` flag to make pytest only
   run that test. See the [documentation](/documentation) page for info.
 
-### Example 
+### Example
 
 Say we are running against the [advanced example](https://github.com/taverntesting/tavern/tree/master/example/advanced)
 from Tavern but we have an error in the yaml:
@@ -524,6 +524,14 @@ bug in Tavern - if this happens, feel free to make an issue
 [on the repo](https://github.com/taverntesting/tavern/issues).
 
 ## Further reading
+
+There are more examples in the [examples]
+(https://github.com/taverntesting/tavern/tree/master/example) folder on Github,
+showing how to do some more advanced testing, including how to test using MQTT.
+Tavern also has a lot of integration tests that show its behaviour - you might
+find it useful to check out the [integration tests]
+(https://github.com/taverntesting/tavern/tree/master/tests/integration) folder
+for some more examples.
 
 For more detailed information on how to use Tavern and how it works, take a look
 at the [documentation](/documentation). To see the source code, suggest
