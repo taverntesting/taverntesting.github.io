@@ -1500,6 +1500,89 @@ This will result in 9 tests being run:
 - fresh orange
 - etc.
 
+If you need to parametrize multiple keys but don't want there to be a new test
+created for every possible combination, pass a list to `key` instead. Each item
+in `val` must then also be a list that is _the same length as the `key`
+variable_. Using the above example, perhaps we just want to test the server
+works correctly with the items "rotten apple", "fresh orange", and "unripe pear"
+rather than the 9 combinations listed above. This can be done like this:
+
+
+```yaml
+---
+test_name: Test post a new fruit
+
+marks:
+  - parametrize:
+      key:
+        - fruit
+        - edible
+      vals:
+        - [rotten, apple]
+        - [fresh, orange]
+        - [unripe, pear]
+        # NOTE: we can specify a nested list like this as well:
+        # -
+        #   - unripe
+        #   - pear
+
+stages:
+  - name: Create a new fruit entry
+    request:
+      url: "{host}/fruit"
+      method: POST
+      json:
+        fruit_type: "{edible} {fruit}"
+    response:
+      status_code: 201
+```
+
+This will result in only those 3 tests being generated.
+
+This can be combined with the 'simpler' style of parametrisation as well - for
+example, to run the above test but also to specify whether the fruit was
+expensive or cheap:
+
+
+```yaml
+---
+test_name: Test post a new fruit and price
+
+marks:
+  - parametrize:
+      key:
+        - fruit
+        - edible
+      vals:
+        - [rotten, apple]
+        - [fresh, orange]
+        - [unripe, pear]
+  - parametrize:
+      key: price
+      vals:
+        - expensive
+        - cheap
+
+stages:
+  - name: Create a new fruit entry
+    request:
+      url: "{host}/fruit"
+      method: POST
+      json:
+        fruit_type: "{price} {edible} {fruit}"
+    response:
+      status_code: 201
+```
+
+This will result in 6 tests:
+
+- expensive rotten apple
+- expensive fresh orange
+- expensive unripe pear
+- cheap rotten apple
+- cheap fresh orange
+- cheap unripe pear
+
 #### usefixtures
 
 Since 0.15.0 there is limited support for Pytest
