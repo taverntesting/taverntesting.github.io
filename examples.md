@@ -2,7 +2,7 @@
 
 ## 1) The simplest possible test
 
-To show you just how simple a Tavern test can be, here's one which uses the JSON Placeholder API at [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com/). To try it, create a new file called `minimal_test.tavern.yaml` with the following:
+To show you just how simple a Tavern test can be, here's one which uses the JSON Placeholder API at [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com/). To try it, create a new file called `test_minimal.tavern.yaml` with the following:
 
 ```yaml
 test_name: Get some fake data from the JSON placeholder API
@@ -27,10 +27,12 @@ $ pip install tavern
 In most circumstances you will be using Tavern with pytest but you can also run it using the Tavern command-line interface, `tavern-ci`, which is installed along with Tavern:
 
 ```bash
-$ tavern-ci minimal.tavern.yaml
+$ tavern-ci test_minimal.tavern.yaml
 ```
 
 Run `tavern-ci --help` for more usage information.
+
+Note that Tavern will only run tests from files whose names follow the pattern `test_*.tavern.yaml` (or `test_*.tavern.yml`) - for example, `test_minimal.tavern.yaml`, `test_another.tavern.yml`.
 
 ## 2) Testing a simple server
 
