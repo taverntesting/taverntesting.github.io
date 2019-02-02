@@ -1697,7 +1697,7 @@ status code, the `body` key should be left blank.
 
 Though Tavern can only currently verify JSON data in the response, data can be
 sent using `x-www-form-urlencoded` encoding by using the `data` key instead of
-`json` in a response. An example of sending form data rather than json:
+`json` in a request. An example of sending form data rather than json:
 
 ```yaml
     request:
