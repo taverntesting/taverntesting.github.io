@@ -2,7 +2,7 @@
 
 # Easier API testing
 
-[![Travis CI](https://travis-ci.org/taverntesting/tavern.svg?branch=master)](https://travis-ci.org/taverntesting/tavern) [![PyPi](https://img.shields.io/pypi/v/tavern.svg)](https://pypi.org/project/tavern/) [![Gitter chat](https://badges.gitter.im/taverntesting.png)](https://gitter.im/taverntesting)
+[![Travis CI](https://travis-ci.org/taverntesting/tavern.svg?branch=master)](https://travis-ci.org/taverntesting/tavern) [![PyPi](https://img.shields.io/pypi/v/tavern.svg)](https://pypi.org/project/tavern/) [![Gitter chat](https://badges.gitter.im/taverntesting.png)](https://gitter.im/taverntesting) [![Read the Docs](https://readthedocs.org/projects/pip/badge/?version=latest&style=flat)](https://tavern.readthedocs.io/en/latest/)
 
 
 Tavern is a pytest plugin, command-line tool and Python library for automated testing of APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests. Tavern supports testing RESTful APIs as well as MQTT based APIs.
