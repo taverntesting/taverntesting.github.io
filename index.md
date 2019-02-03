@@ -16,7 +16,9 @@ To learn more, check out the [examples](https://taverntesting.github.io/examples
 
 ## Quickstart
 
-First, let's create a basic test, `test_minimal.tavern.yaml`:
+First up run `pip install tavern`.
+
+Then, let's create a basic test, `test_minimal.tavern.yaml`:
 
 ```yaml
 ---
