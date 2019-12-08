@@ -1,18 +1,21 @@
 
-
 # Easier API testing
 
 [![Travis CI](https://travis-ci.org/taverntesting/tavern.svg?branch=master)](https://travis-ci.org/taverntesting/tavern) [![PyPi](https://img.shields.io/pypi/v/tavern.svg)](https://pypi.org/project/tavern/) [![Gitter chat](https://badges.gitter.im/taverntesting.png)](https://gitter.im/taverntesting) [![Read the Docs](https://readthedocs.org/projects/pip/badge/?version=latest&style=flat)](https://tavern.readthedocs.io/en/latest/)
 
 
-Tavern is a pytest plugin, command-line tool and Python library for automated testing of APIs, with a simple, concise and flexible YAML-based syntax. It's very simple to get started, and highly customisable for complex tests. Tavern supports testing RESTful APIs as well as MQTT based APIs.
+Tavern is a pytest plugin, command-line tool and Python library for automated
+testing of APIs, with a simple, concise and flexible YAML-based syntax. It's
+very simple to get started, and highly customisable for complex tests. Tavern
+supports testing RESTful APIs as well as MQTT based APIs.
 
-The best way to use Tavern is with [pytest](https://docs.pytest.org/en/latest/). Tavern comes with a pytest plugin so that literally all you have to do is install pytest and Tavern, write your tests in `.tavern.yaml` files and run pytest. This means you get access to all of the pytest ecosystem and allows you to do all sorts of things like regularly run your tests against a test server and report failures or generate HTML reports.
+Tavern acts as a pytest plugin so that all you have to do is install pytest and
+Tavern, write your tests in `.tavern.yaml` files, and run pytest. This means you
+get access to all of the pytest ecosystem.
 
-You can also integrate Tavern into your own test framework or continuous integration setup using the Python library, or use the command line tool, `tavern-ci` with bash scripts and cron jobs.
-
-To learn more, check out the [examples](https://taverntesting.github.io/examples) or the complete [documentation](https://taverntesting.github.io/documentation). If you're interested in contributing to the project take a look at the [GitHub repo](https://github.com/taverntesting/tavern).
-
+You can also integrate Tavern into your own test framework or continuous
+integration setup using the Python library, or use the command line tool,
+`tavern-ci` with bash scripts and cron jobs.
 
 ## Quickstart
 
@@ -61,21 +64,15 @@ test_minimal.tavern.yaml::Get some fake data from the JSON placeholder API PASSE
 ================================ 1 passed in 0.14 seconds =================================
 ```
 
-It is strongly advised that you use Tavern with Pytest - not only does it have a lot of utility to control discovery and execution of tests, there are a huge amount of plugins to improve your development experience. If you absolutely can't use Pytest for some reason, use the `tavern-ci` command line interface:
+Tavern is not just limited to testing HTTP APIs however - it can also be used to
+test MQTT, or you can mix MQTT commands inline with HTTP tests to test more
+complex systems.
 
-```bash
-$ pip install tavern
-$ tavern-ci --stdout test_minimal.tavern.yaml
-2017-11-08 16:17:00,152 [INFO]: (tavern.core:55) Running test : Get some fake data from the JSON placeholder API
-2017-11-08 16:17:00,153 [INFO]: (tavern.core:69) Running stage : Make sure we have the right ID
-2017-11-08 16:17:00,239 [INFO]: (tavern.core:73) Response: '<Response [200]>' ({
-  "userId": 1,
-  "id": 1,
-  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-})
-2017-11-08 16:17:00,239 [INFO]: (tavern.printer:9) PASSED: Make sure we have the right ID [200]
-```
+To learn more, check out the
+[examples](https://taverntesting.github.io/examples) or the complete
+[documentation](https://taverntesting.github.io/documentation). If you're
+interested in contributing to the project take a look at the
+[GitHub repo](https://github.com/taverntesting/tavern).
 
 ## Why not Postman, Insomnia or pyresttest etc?
 
@@ -97,32 +94,8 @@ Tavern does not do many of the things Postman and Insomnia do. For example, Tave
 
 ## Questions and community
 
-If you have any feature requests or if you've found a bug you can raise an [issue on GitHub](https://github.com/taverntesting/tavern/issues).
+If you have any feature requests or if you've found a bug you can raise an
+[issue on GitHub](https://github.com/taverntesting/tavern/issues).
 
-We also have a [Gitter chat](https://gitter.im/taverntesting) for questions and general conversation about the use and development of Tavern.
-
-
-## Hacking on Tavern
-
-If you want to add a feature to Tavern or just play around with it locally, it's a good plan to first create a local development environment ([this page](http://docs.python-guide.org/en/latest/dev/virtualenvs/) has a good primer for working with development environments with Python). After you've created your development environment, just `pip install tox` and run `tox` to run the unit tests. If you want to run the integration tests, make sure you have [docker](https://www.docker.com/) installed and run `tox -c tox-integraton.ini` (bear in mind this might take a while.) It's that simple!
-
-If you want to add a feature to get merged back into mainline Tavern:
-- Add the feature you want
-- Add some tests for your feature:
-    - If you are adding some utility functionality such as improving verification of responses, adding some unit tests might be best. These are in the `tests/unit/` folder and are written using Pytest.
-    - If you are adding more advanced functionality like extra validation functions, or some functionality that directly depends on the format of the input YAML, it might also be useful to add some integration tests. At the time of writing, this is done by adding an example flask endpoint in `tests/integration/server.py` and a corresponding Tavern YAML test file in the same directory. This will be cleaned up a bit once we have a proper plugin system implemented.
-- Open a [pull request](https://github.com/taverntesting/tavern/pulls).
-
-Note that Tavern supports Python 2.7 (for the time being), so any code you add has to be compatible with it. We currently use the [future](https://pypi.python.org/pypi/future) library to provide backwards compatibility.
-
-## Acknowledgements
-
-Tavern makes use of several excellent open-source projects:
-
-- [pytest](https://docs.pytest.org/en/latest/), the testing framework Tavern intergrates with
-- [requests](http://docs.python-requests.org/en/master/), for HTTP requests
-- [YAML](http://yaml.org/) and [pyyaml](https://github.com/yaml/pyyaml), for the test syntax
-- [pykwalify](https://github.com/Grokzen/pykwalify), for YAML schema validation
-- [pyjwt](https://github.com/jpadilla/pyjwt), for decoding JSON Web Tokens
-- [colorlog](https://github.com/borntyping/python-colorlog), for formatting terminal outputs
-- [paho-mqtt](https://github.com/eclipse/paho.mqtt.python), for sending MQTT messages
+We also have a [Gitter chat](https://gitter.im/taverntesting) for questions and
+general conversation about the use and development of Tavern.
