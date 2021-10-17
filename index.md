@@ -1,3 +1,8 @@
+# Note: 2.0 release
+
+There is going to be a 2.0 release sometime soon, see https://github.com/taverntesting/tavern/pull/659 for details.
+
+Prerelease versions are available on Pypi.
 
 # Easier API testing
 
