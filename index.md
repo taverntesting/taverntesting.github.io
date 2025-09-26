@@ -1,6 +1,6 @@
 # Easier API testing
 
-[![Travis CI](https://travis-ci.org/taverntesting/tavern.svg?branch=master)](https://travis-ci.org/taverntesting/tavern) [![PyPi](https://img.shields.io/pypi/v/tavern.svg)](https://pypi.org/project/tavern/) [![Gitter chat](https://badges.gitter.im/taverntesting.png)](https://gitter.im/taverntesting) [![Read the Docs](https://readthedocs.org/projects/pip/badge/?version=latest&style=flat)](https://tavern.readthedocs.io/en/latest/)
+[![Github Actions](https://github.com/taverntesting/tavern/actions/workflows/main.yml/badge.svg)](https://github.com/taverntesting/tavern/actions/workflows/main.yml) [![PyPi](https://img.shields.io/pypi/v/tavern.svg)](https://pypi.org/project/tavern/) [![Read the Docs](https://readthedocs.org/projects/pip/badge/?version=latest&style=flat)](https://tavern.readthedocs.io/en/latest/)
 
 
 Tavern is a pytest plugin, command-line tool and Python library for automated
@@ -10,7 +10,7 @@ supports testing RESTful APIs as well as MQTT based APIs.
 
 Tavern acts as a pytest plugin so that all you have to do is install pytest and
 Tavern, write your tests in `.tavern.yaml` files, and run pytest. This means you
-get access to all of the pytest ecosystem.
+get access to the entire pytest ecosystem.
 
 You can also integrate Tavern into your own test framework or continuous
 integration setup using the Python library, or use the command line tool,
@@ -50,7 +50,7 @@ will only pick up files called `test_*.tavern.yaml`.
 This can then be run like so:
 
 ```bash
-$ pip install tavern[pytest]
+$ pip install tavern
 $ py.test test_minimal.tavern.yaml  -v
 =================================== test session starts ===================================
 platform linux -- Python 3.5.2, pytest-3.4.2, py-1.5.2, pluggy-0.6.0 -- /home/taverntester/.virtualenvs/tavernexample/bin/python3
@@ -78,24 +78,15 @@ interested in contributing to the project take a look at the
 
 Tavern is a focused tool which does one thing well: automated testing of APIs.
 
-**Postman** and **Insomnia** are excellent tools which cover a wide range of use-cases for RESTful APIs, and indeed we use Tavern alongside Postman. However, specifically with regards to automated testing, Tavern has several advantages over Postman:
+**Postman**, **Insomnia**, **Bruno**, etc. are excellent tools which cover a wide range of use-cases for RESTful APIs. However, specifically with regards to automated testing, Tavern has several advantages over Postman:
 - A full-featured Python environment for writing easily reusable custom validation functions
-- Testing of MQTT based systems in tandem with RESTful APIS.
+- Testing of MQTT and gRCP based systems in tandem with RESTful APIS.
 - Seamless integration with pytest to keep all your tests in one place
 - A simpler, less verbose and clearer testing language
 
 Tavern does not do many of the things Postman and Insomnia do. For example, Tavern does not have a GUI nor does it do API monitoring or mock servers. On the other hand, Tavern is free and open-source and is a more powerful tool for developers to automate tests.
 
-**pyresttest** is a similar tool to Tavern for testing RESTful APIs, but is no longer actively developed. On top of MQTT testing, Tavern has several other advantages over PyRestTest which overall add up to a better developer experience:
-
-- Cleaner test syntax which is more intuitive, especially for non-developers
-- Validation function are more flexible and easier to use
-- Better explanations of why a test failed
-
 ## Questions and community
 
 If you have any feature requests or if you've found a bug you can raise an
 [issue on GitHub](https://github.com/taverntesting/tavern/issues).
-
-We also have a [Gitter chat](https://gitter.im/taverntesting) for questions and
-general conversation about the use and development of Tavern.
